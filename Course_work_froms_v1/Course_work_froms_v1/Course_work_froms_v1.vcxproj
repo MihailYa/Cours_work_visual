@@ -137,16 +137,46 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="Ford.cpp" />
+    <ClCompile Include="graph.cpp" />
+    <ClCompile Include="Humori.cpp" />
+    <ClCompile Include="input.cpp" />
+    <ClCompile Include="list.cpp" />
     <ClCompile Include="MyForm.cpp" />
+    <ClCompile Include="MyForm_.cpp" />
+    <ClCompile Include="output.cpp" />
+    <ClCompile Include="queue.cpp" />
+    <ClCompile Include="stack.cpp" />
+    <ClCompile Include="stdafx.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="dynamic_array.hpp" />
+    <ClInclude Include="Ford.hpp" />
+    <ClInclude Include="globals.hpp" />
+    <ClInclude Include="graph.hpp" />
+    <ClInclude Include="Humori.hpp" />
+    <ClInclude Include="input.hpp" />
+    <ClInclude Include="list.hpp" />
     <ClInclude Include="MyForm.h">
       <FileType>CppForm</FileType>
     </ClInclude>
+    <ClInclude Include="MyForm_.h">
+      <FileType>CppForm</FileType>
+    </ClInclude>
+    <ClInclude Include="output.hpp" />
+    <ClInclude Include="queue.hpp" />
+    <ClInclude Include="stack.hpp" />
+    <ClInclude Include="stdafx.hpp" />
   </ItemGroup>
   <ItemGroup>
     <EmbeddedResource Include="MyForm.resx">
       <DependentUpon>MyForm.h</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="MyForm.ru.resx">
+      <DependentUpon>MyForm.h</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="MyForm_.resx">
+      <DependentUpon>MyForm_.h</DependentUpon>
     </EmbeddedResource>
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />

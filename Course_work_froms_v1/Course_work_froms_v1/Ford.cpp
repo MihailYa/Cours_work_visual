@@ -1,6 +1,6 @@
 #include "Ford.hpp"
 
-int Ford(const char *file_name, graph *&gr, int in, int out)
+int Ford(const char *file_name, graph *&gr, int &iterations, int in, int out)
 {
 	FILE *f;
 
@@ -16,11 +16,11 @@ int Ford(const char *file_name, graph *&gr, int in, int out)
 	bool *visited = new bool[gr->n_vertexes];
 	int cg_value = INF;	// Value by which stream can be changed
 	int c_stream;		// Current stream
-	int iter = 1;		// Current iteration
+	int iter = 0;		// Current iteration
 	char name_of_file[40];
 	char buf[2];
 
-	fprintf(f, "\n--------------Ford Fulkerson Begin--------------\n");
+	fprintf(f, "\n--------------Ford_Fulkerson_Begin--------------\n");
 
 	if (gr->adj_m == NULL)
 		gr->adj_m = adj(gr);
@@ -31,8 +31,11 @@ int Ford(const char *file_name, graph *&gr, int in, int out)
 	if (out == -1)
 		out = def_ss(1, gr);
 
+	if (in == -1 || out == -1)
+		exit(1);
+
 	c_stream = def_stream(gr, out);
-	fprintf(f, "\n Current stream of web = %d.\nSource vertex: %d.\nSink vertex: %d.\n\n", c_stream, gr->v_n[in], gr->v_n[out]);
+	fprintf(f, "\n Current stream of web = %d.\nSource vertex: %d.\nSink vertex: %d\n\n", c_stream, gr->v_n[in], gr->v_n[out]);
 
 	// Create stack
 	T_stack *head = NULL;
@@ -42,13 +45,6 @@ int Ford(const char *file_name, graph *&gr, int in, int out)
 	visited[in] = true;
 
 	add_e(head, gr->v_n[in]);
-
-	// Draw current graph
-	strcpy(name_of_file, "Ford_Iteration_");
-	itoa(iter, buf, 10);
-	strcat(name_of_file, buf);
-	strcat(name_of_file, ".png");
-	graphviz(name_of_file, gr);
 
 	while (DFS_Ford(gr, in, out, cg_value, visited, head))
 	{
@@ -80,7 +76,7 @@ int Ford(const char *file_name, graph *&gr, int in, int out)
 	fprintf(f, "\nNew way can't be found.\n Maximum stream = %d.", c_stream);
 	delete[] visited;
 
-	fprintf(f, "\n---------------Ford Fulkerson End---------------\n");
+	fprintf(f, "\n---------------Ford_Fulkerson_End---------------\n");
 	if (fclose(f))
 	{
 		printf("Error with closing the file: %s\n", file_name);
@@ -88,6 +84,7 @@ int Ford(const char *file_name, graph *&gr, int in, int out)
 		exit(1);
 	}
 
+	iterations = iter;
 	return c_stream;
 }
 

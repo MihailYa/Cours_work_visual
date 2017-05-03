@@ -13,9 +13,10 @@
 * @gr pointer on graph
 * @in number of Source vertex
 * @out number of Sink vertex
+* @iterations number of iterations
 * @return maximum stream
 */
-int Ford(const char *file_name, graph *&gr, int in = -1, int out = -1);
+int Ford(const char *file_name, graph *&gr, int &iterations, int in = -1, int out = -1);
 
 /**
 * Ford's algorithm (output in opened file)
