@@ -214,8 +214,7 @@ void recurs_humori(graph *&gr_result, graph **&graphs, int ver, FILE **f_output)
 	strcat(tmp, buf);
 	strcat(tmp, "_second_half.png");
 	graphviz(tmp, graphs[gr_result->n_vertexes - 1]);
-	delete[] tmp;
-	delete[] buf;
+	
 
 	//---------------------------------------------------------
 	//
@@ -279,6 +278,13 @@ void recurs_humori(graph *&gr_result, graph **&graphs, int ver, FILE **f_output)
 	// Change edges of result graph
 	cg_adj(gr_result, graphs, ver, vect);
 
+	strcpy(tmp, "Humori_Graph_");
+	strcat(tmp, buf);
+	strcat(tmp, ".png");
+	graphviz(tmp, gr_result, true);
+	// Free memory
+	delete[] tmp;
+	delete[] buf;
 	// Delete minimum cut vector
 	delete[] vect;
 	//---------------------------------------------------------

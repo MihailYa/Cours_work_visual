@@ -1,2 +1,143 @@
 
 --------------Ford_Fulkerson_Begin--------------
+
+ Current stream of web = 0.
+Source vertex: 1.
+Sink vertex: 2
+
+
+Found way:
+2 <- 1
+
+Valued by which streams changed: 8
+
+Current streams:
+         Edges | Pass able | Current stream
+    1 -> 2     |         8 | 8
+    2 -> 3     |        12 | 0
+    3 -> 6     |         2 | 0
+    6 -> 1     |        11 | 0
+    1 -> 5     |         7 | 0
+    5 -> 2     |         3 | 0
+    5 -> 6     |         4 | 0
+    5 -> 4     |         5 | 0
+    4 -> 2     |        10 | 0
+    4 -> 6     |         6 | 0
+    4 -> 3     |         9 | 0
+
+ Current stream of web = 8
+
+
+Found way:
+2 <- 5 <- 1
+
+Valued by which streams changed: 3
+
+Current streams:
+         Edges | Pass able | Current stream
+    1 -> 2     |         8 | 8
+    2 -> 3     |        12 | 0
+    3 -> 6     |         2 | 0
+    6 -> 1     |        11 | 0
+    1 -> 5     |         7 | 3
+    5 -> 2     |         3 | 3
+    5 -> 6     |         4 | 0
+    5 -> 4     |         5 | 0
+    4 -> 2     |        10 | 0
+    4 -> 6     |         6 | 0
+    4 -> 3     |         9 | 0
+
+ Current stream of web = 11
+
+
+Found way:
+2 <- 4 <- 5 <- 1
+
+Valued by which streams changed: 4
+
+Current streams:
+         Edges | Pass able | Current stream
+    1 -> 2     |         8 | 8
+    2 -> 3     |        12 | 0
+    3 -> 6     |         2 | 0
+    6 -> 1     |        11 | 0
+    1 -> 5     |         7 | 7
+    5 -> 2     |         3 | 3
+    5 -> 6     |         4 | 0
+    5 -> 4     |         5 | 4
+    4 -> 2     |        10 | 4
+    4 -> 6     |         6 | 0
+    4 -> 3     |         9 | 0
+
+ Current stream of web = 15
+
+
+Found way:
+2 <- 3 <- 6 <- 1
+
+Valued by which streams changed: 2
+
+Current streams:
+         Edges | Pass able | Current stream
+    1 -> 2     |         8 | 8
+    2 -> 3     |        12 | 2
+    3 -> 6     |         2 | 2
+    6 -> 1     |        11 | 2
+    1 -> 5     |         7 | 7
+    5 -> 2     |         3 | 3
+    5 -> 6     |         4 | 0
+    5 -> 4     |         5 | 4
+    4 -> 2     |        10 | 4
+    4 -> 6     |         6 | 0
+    4 -> 3     |         9 | 0
+
+ Current stream of web = 17
+
+
+Found way:
+2 <- 4 <- 6 <- 1
+
+Valued by which streams changed: 6
+
+Current streams:
+         Edges | Pass able | Current stream
+    1 -> 2     |         8 | 8
+    2 -> 3     |        12 | 2
+    3 -> 6     |         2 | 2
+    6 -> 1     |        11 | 8
+    1 -> 5     |         7 | 7
+    5 -> 2     |         3 | 3
+    5 -> 6     |         4 | 0
+    5 -> 4     |         5 | 4
+    4 -> 2     |        10 | 10
+    4 -> 6     |         6 | 6
+    4 -> 3     |         9 | 0
+
+ Current stream of web = 23
+
+
+Found way:
+2 <- 3 <- 4 <- 5 <- 6 <- 1
+
+Valued by which streams changed: 1
+
+Current streams:
+         Edges | Pass able | Current stream
+    1 -> 2     |         8 | 8
+    2 -> 3     |        12 | 3
+    3 -> 6     |         2 | 2
+    6 -> 1     |        11 | 9
+    1 -> 5     |         7 | 7
+    5 -> 2     |         3 | 3
+    5 -> 6     |         4 | 1
+    5 -> 4     |         5 | 5
+    4 -> 2     |        10 | 10
+    4 -> 6     |         6 | 6
+    4 -> 3     |         9 | 1
+
+ Current stream of web = 24
+
+
+New way can't be found.
+ Maximum stream = 24.
+---------------Ford_Fulkerson_End---------------

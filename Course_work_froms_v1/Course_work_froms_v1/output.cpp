@@ -32,9 +32,20 @@ void output_streams(graph *gr, FILE **f)
 	}
 }
 
-void output_graphviz(graph *gr, FILE **f)
+void output_graphviz(graph *gr, FILE **f, bool type)
 {
-	if (gr->type)
+	if (type)
+	{
+		fprintf(*f, "graph G {\n");
+		for (int i = 0; i < gr->n_edges; i++)
+		{
+			fprintf(*f, "T%d -- ", gr->v_n[gr->edges[i].in]);
+			fprintf(*f, "T%d", gr->v_n[gr->edges[i].out]);
+			fprintf(*f, " [label=\" %d/%d \"];\n", gr->edges[i].stream, gr->edges[i].stream);
+
+		}
+	}
+	else if (gr->type)
 	{
 		fprintf(*f, "digraph G {\n");
 		for (int i = 0; i < gr->n_edges; i++)
@@ -66,8 +77,8 @@ void output_graphviz(graph *gr, FILE **f)
 				fprintf(*f, "S%d", gr->v_n[gr->edges[i].out] - UNION_VERTEX);
 			else
 				fprintf(*f, "%d", gr->v_n[gr->edges[i].out]);
-
 			fprintf(*f, " [label=\" %d/%d \"];\n", gr->edges[i].stream, gr->edges[i].pass_abl);
+				
 		}
 	}
 	/*for (int i = 0; i < gr->n_vertexes; i++)
@@ -75,11 +86,11 @@ void output_graphviz(graph *gr, FILE **f)
 	fprintf(*f, "}");
 }
 
-void graphviz(char *file_name, graph *gr)
+void graphviz(char *file_name, graph *gr, bool type)
 {
 	FILE *temp;
 	temp = fopen("temp.dot", "wt");
-	output_graphviz(gr, &temp);
+	output_graphviz(gr, &temp, type);
 	fclose(temp);
 	
 	char *param = new char[50];

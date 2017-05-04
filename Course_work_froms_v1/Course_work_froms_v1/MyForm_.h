@@ -38,7 +38,9 @@ namespace Course_work_froms_v1 {
 
 			CreateDirectory(L"" OUTPUT_DIR, NULL);
 			chdir(OUTPUT_DIR);
-			
+			FILE *f;
+			long int file_size;
+			char *tmp;
 
 			switch (mode)
 			{
@@ -52,17 +54,17 @@ namespace Course_work_froms_v1 {
 					Ford("Ford.txt", gr, iters, vers[0]-1, vers[1]-1);
 				else
 					Ford("Ford.txt", gr, iters);
-				FILE *f;
+				
 				if ((f = fopen("Ford.txt", "rb")) == NULL)
 				{
 					exit(1);
 				}
-				long int file_size;
+				
 				fseek(f, 0, SEEK_END);
 				file_size = ftell(f);
 				rewind(f);
 
-				char *tmp = new char[file_size+1];
+				tmp = new char[file_size+1];
 				fread(tmp, file_size, 1, f);
 
 				fclose(f);
@@ -91,6 +93,22 @@ namespace Course_work_froms_v1 {
 
 				Humori("Humori_result.txt", gr);
 
+				if ((f = fopen("Humori_result.txt", "rb")) == NULL)
+				{
+					exit(1);
+				}
+				fseek(f, 0, SEEK_END);
+				file_size = ftell(f);
+				rewind(f);
+
+				tmp = new char[file_size + 1];
+				fread(tmp, file_size, 1, f);
+
+				fclose(f);
+				tmp[file_size] = '\0';
+				this->richTextBox1->Text = gcnew String(tmp);
+				delete[] tmp;
+
 				slides_humori = gr->n_vertexes - 1;
 				c_slide = 1;
 				half = -1;
@@ -105,6 +123,74 @@ namespace Course_work_froms_v1 {
 			}
 			case 2:
 			{
+				graphviz("Input.png", gr);
+				pictureBox1->Image = Image::FromFile("Input.png");
+				int iters;
+				if (ss)
+					Ford("Ford.txt", gr, iters, vers[0] - 1, vers[1] - 1);
+				else
+					Ford("Ford.txt", gr, iters);
+
+				if ((f = fopen("Ford.txt", "rb")) == NULL)
+				{
+					exit(1);
+				}
+
+				fseek(f, 0, SEEK_END);
+				file_size = ftell(f);
+				rewind(f);
+
+				tmp = new char[file_size + 1];
+				fread(tmp, file_size, 1, f);
+
+				fclose(f);
+				tmp[file_size] = '\0';
+				ford_text = tmp;
+				delete[] tmp;
+
+				slides_ford = iters;
+				c_slide = 1;
+
+				//
+				// Humori
+				//
+				for (int i = 0; i < gr->n_edges; i++)
+				{
+					gr->edges[i].stream = 0;
+					gr->edges[i].orient = false;
+				}
+
+				gr->type = false;
+
+				Humori("Humori_result.txt", gr);
+
+				if ((f = fopen("Humori_result.txt", "rb")) == NULL)
+				{
+					exit(1);
+				}
+				fseek(f, 0, SEEK_END);
+				file_size = ftell(f);
+				rewind(f);
+
+				tmp = new char[file_size + 1];
+				fread(tmp, file_size, 1, f);
+
+				fclose(f);
+				tmp[file_size] = '\0';
+				humori_text = tmp;
+				delete[] tmp;
+
+				slides_humori = gr->n_vertexes - 1;
+
+				this->radioButton1->Checked = true;
+				this->radioButton1->Enabled = true;
+				this->radioButton2->Enabled = true;
+				this->radioButton2->Checked = false;
+
+				this->richTextBox1->Text = gcnew String(ford_text.c_str());
+
+				Change_Slide();
+
 
 				break;
 			}
@@ -222,7 +308,9 @@ namespace Course_work_froms_v1 {
 			// 
 			// pictureBox1
 			// 
+			this->pictureBox1->BackColor = System::Drawing::SystemColors::ActiveCaption;
 			this->pictureBox1->Location = System::Drawing::Point(595, 59);
+			this->pictureBox1->Margin = System::Windows::Forms::Padding(0);
 			this->pictureBox1->Name = L"pictureBox1";
 			this->pictureBox1->Size = System::Drawing::Size(414, 741);
 			this->pictureBox1->SizeMode = System::Windows::Forms::PictureBoxSizeMode::Zoom;
@@ -240,7 +328,9 @@ namespace Course_work_froms_v1 {
 			// 
 			// pictureBox2
 			// 
+			this->pictureBox2->BackColor = System::Drawing::SystemColors::ActiveCaption;
 			this->pictureBox2->Location = System::Drawing::Point(12, 378);
+			this->pictureBox2->Margin = System::Windows::Forms::Padding(0);
 			this->pictureBox2->Name = L"pictureBox2";
 			this->pictureBox2->Size = System::Drawing::Size(509, 422);
 			this->pictureBox2->SizeMode = System::Windows::Forms::PictureBoxSizeMode::Zoom;
@@ -312,6 +402,9 @@ namespace Course_work_froms_v1 {
 		private: System::Void radioButton1_Click(System::Object^  sender, System::EventArgs^  e) {
 			half = -2;
 			c_slide = 1;
+			this->pictureBox1->Image = Image::FromFile("Input.png");
+			this->label2->Text = L"Введенний граф:";
+			this->richTextBox1->Text = gcnew String(ford_text.c_str());
 			Change_Slide();
 		}
 		private: void Change_Slide()
@@ -343,7 +436,6 @@ namespace Course_work_froms_v1 {
 					strcat(temp, buf);
 					strcat(temp, " ітерації.");
 					this->label3->Text = gcnew String(temp);
-					return;
 				}
 				else if (half == 0)
 				{
@@ -353,7 +445,6 @@ namespace Course_work_froms_v1 {
 					strcat(temp, buf);
 					strcat(temp, " ітерації. Перший сконденсований граф.");
 					this->label3->Text = gcnew String(temp);
-					return;
 				}
 				else if(half == 1)
 				{
@@ -363,7 +454,6 @@ namespace Course_work_froms_v1 {
 					strcat(temp, buf);
 					strcat(temp, " ітерації. Другий сконденсований граф.");
 					this->label3->Text = gcnew String(temp);
-					return;
 				}
 				else if (half == 2)
 				{
@@ -371,74 +461,98 @@ namespace Course_work_froms_v1 {
 					this->pictureBox2->Image = Image::FromFile(gcnew String(temp));
 					strcpy(temp, "Кінцевий граф.");
 					this->label3->Text = gcnew String(temp);
-					return;
+				}
+				if (half != 2)
+				{
+					strcpy(temp, "Humori_Graph_");
+					strcat(temp, buf);
+					strcat(temp, ".png");
+					this->pictureBox1->Image = Image::FromFile(gcnew String(temp));
+					
+					strcpy(temp, "Поточний вигляд результуючого графу:");
+					this->label2->Text = gcnew String(temp);
 				}
 			}
 		}
-	private: System::Void button2_Click(System::Object^  sender, System::EventArgs^  e) {
-		if (this->radioButton1->Checked)
-		{
-			c_slide++;
-			if (c_slide > slides_ford)
-				c_slide = 1;
+		private: System::Void button2_Click(System::Object^  sender, System::EventArgs^  e) {
+			if (this->radioButton1->Checked)
+			{
+				c_slide++;
+				if (c_slide > slides_ford)
+					c_slide = 1;
 			
-			Change_Slide();
-		}
-		else
-		{
-			half++;
-			if (half > 1)
-				half = -1;
+				Change_Slide();
+			}
 			else
 			{
-				Change_Slide();
-				return;
-			}
+				if (half == 2)
+				{
+					half = -1;
+					c_slide = 1;
+					Change_Slide();
+					return;
+				}
 
-			c_slide++;
-			if (c_slide > slides_humori)
-			{
-				c_slide = 0;
-				half = 2;
-			}
+				half++;
+				if (half > 1)
+					half = -1;
+				else
+				{
+					Change_Slide();
+					return;
+				}
+
+				c_slide++;
+				if (c_slide > slides_humori)
+				{
+					half = 2;
+				}
 			
-			Change_Slide();
+				Change_Slide();
+			}
 		}
-	}
-	private: System::Void button1_Click(System::Object^  sender, System::EventArgs^  e) {
-		if (this->radioButton1->Checked)
-		{
-			c_slide--;
-			if (c_slide < 1)
-				c_slide = slides_ford;
+		private: System::Void button1_Click(System::Object^  sender, System::EventArgs^  e) {
+			if (this->radioButton1->Checked)
+			{
+				c_slide--;
+				if (c_slide < 1)
+					c_slide = slides_ford;
 
-			Change_Slide();
-		}
-		else
-		{
-			half--;
-			if (half < -1)
-				half = 1;
+				Change_Slide();
+			}
 			else
 			{
-				Change_Slide();
-				return;
-			}
+				if (half == 2)
+				{
+					c_slide = slides_humori;
+					half = 1;
+					Change_Slide();
+					return;
+				}
 
-			c_slide--;
-			if (c_slide < 1)
-			{
-				c_slide = 1;
-				half = 2;
-			}
+				half--;
+				if (half < -1)
+					half = 1;
+				else
+				{
+					Change_Slide();
+					return;
+				}
+
+				c_slide--;
+				if (c_slide < 1)
+				{
+					half = 2;
+				}
 			
+				Change_Slide();
+			}
+		}
+		private: System::Void radioButton2_Click(System::Object^  sender, System::EventArgs^  e) {
+			half = -1;
+			c_slide = 1;
+			this->richTextBox1->Text = gcnew String(humori_text.c_str());
 			Change_Slide();
 		}
-	}
-
-	private: System::Void radioButton2_Click(System::Object^  sender, System::EventArgs^  e) {
-		half = -1;
-		c_slide = 1;
-	}
 };
 }

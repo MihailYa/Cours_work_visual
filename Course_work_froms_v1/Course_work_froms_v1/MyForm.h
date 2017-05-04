@@ -89,6 +89,7 @@ namespace Course_work_froms_v1 {
 		/// </summary>
 		void InitializeComponent(void)
 		{
+			System::Windows::Forms::CheckBox^  checkBox1;
 			this->header = (gcnew System::Windows::Forms::Label());
 			this->richTextBox1 = (gcnew System::Windows::Forms::RichTextBox());
 			this->label1 = (gcnew System::Windows::Forms::Label());
@@ -110,6 +111,7 @@ namespace Course_work_froms_v1 {
 			this->textBox3 = (gcnew System::Windows::Forms::TextBox());
 			this->textBox4 = (gcnew System::Windows::Forms::TextBox());
 			this->checkBox4 = (gcnew System::Windows::Forms::CheckBox());
+			checkBox1 = (gcnew System::Windows::Forms::CheckBox());
 			this->SuspendLayout();
 			// 
 			// header
@@ -149,12 +151,10 @@ namespace Course_work_froms_v1 {
 			// checkBox1
 			// 
 			this->checkBox1->AutoSize = true;
-			this->checkBox1->Checked = true;
-			this->checkBox1->CheckState = System::Windows::Forms::CheckState::Checked;
 			this->checkBox1->Font = (gcnew System::Drawing::Font(L"Open Sans", 9));
 			this->checkBox1->Location = System::Drawing::Point(30, 65);
 			this->checkBox1->Name = L"checkBox1";
-			this->helpProvider1->SetShowHelp(this->checkBox1, true);
+			this->helpProvider1->SetShowHelp(checkBox1, true);
 			this->checkBox1->Size = System::Drawing::Size(245, 24);
 			this->checkBox1->TabIndex = 3;
 			this->checkBox1->Text = L"Алгоритм Форда-Фалкерсона";
@@ -215,12 +215,14 @@ namespace Course_work_froms_v1 {
 			// radioButton1
 			// 
 			this->radioButton1->AutoSize = true;
+			this->radioButton1->Checked = true;
 			this->radioButton1->Font = (gcnew System::Drawing::Font(L"Open Sans", 9, System::Drawing::FontStyle::Regular, System::Drawing::GraphicsUnit::Point,
 				static_cast<System::Byte>(204)));
 			this->radioButton1->Location = System::Drawing::Point(30, 296);
 			this->radioButton1->Name = L"radioButton1";
 			this->radioButton1->Size = System::Drawing::Size(84, 24);
 			this->radioButton1->TabIndex = 8;
+			this->radioButton1->TabStop = true;
 			this->radioButton1->Text = L"Вручну";
 			this->radioButton1->UseVisualStyleBackColor = true;
 			this->radioButton1->Click += gcnew System::EventHandler(this, &MyForm::radioButton1_Click);
@@ -228,14 +230,12 @@ namespace Course_work_froms_v1 {
 			// radioButton2
 			// 
 			this->radioButton2->AutoSize = true;
-			this->radioButton2->Checked = true;
 			this->radioButton2->Font = (gcnew System::Drawing::Font(L"Open Sans", 9, System::Drawing::FontStyle::Regular, System::Drawing::GraphicsUnit::Point,
 				static_cast<System::Byte>(204)));
 			this->radioButton2->Location = System::Drawing::Point(30, 326);
 			this->radioButton2->Name = L"radioButton2";
 			this->radioButton2->Size = System::Drawing::Size(89, 24);
 			this->radioButton2->TabIndex = 9;
-			this->radioButton2->TabStop = true;
 			this->radioButton2->Text = L"З файла";
 			this->radioButton2->UseVisualStyleBackColor = true;
 			this->radioButton2->Click += gcnew System::EventHandler(this, &MyForm::radioButton2_Click);
@@ -247,7 +247,6 @@ namespace Course_work_froms_v1 {
 			this->textBox1->Name = L"textBox1";
 			this->textBox1->Size = System::Drawing::Size(100, 28);
 			this->textBox1->TabIndex = 10;
-			this->textBox1->Text = L"gr3.txt";
 			this->textBox1->Visible = false;
 			// 
 			// checkBox3
