@@ -7,20 +7,40 @@ void input(const char *file_name, graph *&gr)
 	// Open file
 	if ((f = fopen(file_name, "rt")) == NULL)
 	{
-		printf("Error opening file %s. Error code: %d\n", file_name, errno);
-		getch();
-		exit(1);
+		T_exception e;
+		e.code = 1;
+		e.text = "Не можливо відкрити файл ";
+		e.text += file_name;
+		throw(e);
 	}
 
 	int n_vertexes, n_edges;
 	int type;
 
 	// Read type of graph
-	fscanf(f, "%d", &type);
+	if (fscanf(f, "%d", &type) <= 0)
+	{
+		T_exception e;
+		e.code = 1;
+		e.text = "Не правильно вказано граф.";
+		throw(e);
+	}
 
 	// Read number of edges and vertexes
-	fscanf(f, "%d", &n_vertexes);
-	fscanf(f, "%d", &n_edges);
+	if (fscanf(f, "%d", &n_vertexes) <= 0 || n_vertexes <= 0)
+	{
+		T_exception e;
+		e.code = 1;
+		e.text = "Не правильно вказано граф.";
+		throw(e);
+	}
+	if(fscanf(f, "%d", &n_edges)<=0 || n_edges <= 0)
+	{
+		T_exception e;
+		e.code = 1;
+		e.text = "Не правильно вказано граф.";
+		throw(e);
+	}
 
 	gr = create_graph(n_vertexes, n_edges, type);
 
@@ -29,13 +49,34 @@ void input(const char *file_name, graph *&gr)
 	{
 		if (feof(f))
 		{
-			exit(1);
+			T_exception e;
+			e.code = 1;
+			e.text = "Не правильно вказано граф.";
+			throw(e);
 		}
-		fscanf(f, "%d", &(gr->edges[i].out));
+		if (fscanf(f, "%d", &(gr->edges[i].out)) <= 0 || gr->edges[i].out<=0 || gr->edges[i].out > gr->n_vertexes)
+		{
+			T_exception e;
+			e.code = 1;
+			e.text = "Не правильно вказано граф.";
+			throw(e);
+		}
 		gr->edges[i].out--;
-		fscanf(f, "%d", &(gr->edges[i].in));
+		if (fscanf(f, "%d", &(gr->edges[i].in)) <= 0 || gr->edges[i].in <= 0 || gr->edges[i].in > gr->n_vertexes)
+		{
+			T_exception e;
+			e.code = 1;
+			e.text = "Не правильно вказано граф.";
+			throw(e);
+		}
 		gr->edges[i].in--;
-		fscanf(f, "%d", &(gr->edges[i].pass_abl));
+		if (fscanf(f, "%d", &(gr->edges[i].pass_abl)) <= 0 || gr->edges[i].pass_abl <= 0)
+		{
+			T_exception e;
+			e.code = 1;
+			e.text = "Не правильно вказано граф.";
+			throw(e);
+		}
 		gr->edges[i].stream = 0;
 		if(type)
 			gr->edges[i].orient = true;
@@ -50,9 +91,11 @@ void input(const char *file_name, graph *&gr)
 
 	if (fclose(f))
 	{
-		printf("Error with closing the file: %s\n", file_name);
-		getch();
-		exit(1);
+		T_exception e;
+		e.code = 1;
+		e.text = "Не можливо закрити файл ";
+		e.text += file_name;
+		throw(e);
 	}
 }
 
@@ -73,9 +116,31 @@ void input_char(const char *text, graph *&gr)
 
 	// Read number of edges and vertexes
 	tmp = strtok(NULL, " \n");
+	if (tmp == NULL)
+	{
+		T_exception e;
+		e.code = 1;
+		e.text = "Не правильно вказано граф.";
+		throw(e);
+	}
 	n_vertexes = atoi(tmp);
 	tmp = strtok(NULL, " \n");
+	if (tmp == NULL)
+	{
+		T_exception e;
+		e.code = 1;
+		e.text = "Не правильно вказано граф.";
+		throw(e);
+	}
 	n_edges = atoi(tmp);
+
+	if (n_vertexes <= 0 || n_edges <=0)
+	{
+		T_exception e;
+		e.code = 1;
+		e.text = "Не правильно вказано граф.";
+		throw(e);
+	}
 
 	gr = create_graph(n_vertexes, n_edges, type);
 
@@ -83,16 +148,33 @@ void input_char(const char *text, graph *&gr)
 	for (int i = 0; i < gr->n_edges; i++)
 	{
 		tmp = strtok(NULL, " \n");
-		gr->edges[i].out = atoi(tmp);
+		if (tmp == NULL || (gr->edges[i].out = atoi(tmp))<=0 || gr->edges[i].out>n_vertexes)
+		{
+			T_exception e;
+			e.code = 1;
+			e.text = "Не правильно вказано граф.";
+			throw(e);
+		}
 		gr->edges[i].out--;
 
 		tmp = strtok(NULL, " \n");
-		gr->edges[i].in = atoi(tmp);
+		if (tmp == NULL || (gr->edges[i].in = atoi(tmp)) <= 0 || gr->edges[i].in>n_vertexes)
+		{
+			T_exception e;
+			e.code = 1;
+			e.text = "Не правильно вказано граф.";
+			throw(e);
+		}
 		gr->edges[i].in--;
 
 		tmp = strtok(NULL, " \n");
-		gr->edges[i].pass_abl = atoi(tmp);
-		gr->edges[i].in--;
+		if (tmp == NULL || (gr->edges[i].pass_abl = atoi(tmp))<=0)
+		{
+			T_exception e;
+			e.code = 1;
+			e.text = "Не правильно вказано граф.";
+			throw(e);
+		}
 
 		gr->edges[i].stream = 0;
 

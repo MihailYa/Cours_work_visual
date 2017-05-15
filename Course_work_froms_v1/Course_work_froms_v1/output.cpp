@@ -1,5 +1,7 @@
 #include "output.hpp"
 
+using namespace std;
+
 void output(graph *gr, FILE **f)
 {
 	fprintf(*f, " %13s | %9s | %s\n", "Edges", "Pass able", "Current stream");
@@ -86,18 +88,115 @@ void output_graphviz(graph *gr, FILE **f, bool type)
 	fprintf(*f, "}");
 }
 
+string output_graphviz(graph *gr, bool type)
+{
+	std::string res;
+	if (type)
+	{
+		res = "graph G {\n";
+		for (int i = 0; i < gr->n_edges; i++)
+		{
+			res += "T";
+			res += to_string(gr->v_n[gr->edges[i].in]);
+			res += " -- ";
+			res += "T";
+			res+= to_string(gr->v_n[gr->edges[i].out]);
+			res += " [label=\" ";
+			res+= to_string(gr->edges[i].stream);
+			res += "/";
+			res+= to_string(gr->edges[i].stream);
+			res += " \"];\n";
+		}
+	}
+	else if (gr->type)
+	{
+		res = "digraph G {\n";
+		for (int i = 0; i < gr->n_edges; i++)
+		{
+			if (gr->v_n[gr->edges[i].in] > UNION_VERTEX)
+			{
+				res += "S";
+				res += to_string(gr->v_n[gr->edges[i].in] - UNION_VERTEX);
+				res += " -> ";
+			}
+			else
+			{
+				res += to_string(gr->v_n[gr->edges[i].in]);
+				res += " -> "; 
+			}
+
+			if (gr->v_n[gr->edges[i].out] > UNION_VERTEX)
+			{
+				res += "S";
+				res += to_string(gr->v_n[gr->edges[i].out] - UNION_VERTEX);
+			}
+			else
+			{
+				res += to_string(gr->v_n[gr->edges[i].out]);
+			}
+			res += " [label=\" ";
+			res += to_string(gr->edges[i].stream);
+			res += "/";
+			res += to_string(gr->edges[i].pass_abl);
+			res += " \"];\n";
+		}
+	}
+	else
+	{
+		res = "graph G {\n";
+		for (int i = 0; i < gr->n_edges; i++)
+		{
+			if (gr->v_n[gr->edges[i].in] > UNION_VERTEX)
+			{
+				res += "S";
+				res += to_string(gr->v_n[gr->edges[i].in] - UNION_VERTEX);
+				res += " -- ";
+			}
+			else
+			{
+				res += to_string(gr->v_n[gr->edges[i].in]);
+				res += " -- ";
+			}
+
+			if (gr->v_n[gr->edges[i].out] > UNION_VERTEX)
+			{
+				res += "S";
+				res += to_string(gr->v_n[gr->edges[i].out] - UNION_VERTEX);
+			}
+			else
+			{
+				res += to_string(gr->v_n[gr->edges[i].out]);
+			}
+			res += " [label=\" ";
+			res += to_string(gr->edges[i].stream);
+			res += "/";
+			res += to_string(gr->edges[i].pass_abl);
+			res += " \"];\n";
+		}
+	}
+
+	res += "}";
+
+	return res;
+}
+
 void graphviz(char *file_name, graph *gr, bool type)
 {
-	FILE *temp;
-	temp = fopen("temp.dot", "wt");
-	output_graphviz(gr, &temp, type);
-	fclose(temp);
-	
-	char *param = new char[50];
-	strcpy(param, "dot -Tpng temp.dot -o ");
-	strcat(param, file_name);
-	system(param);
-	delete[] param;
+	std::string inp;
 
-	remove("temp.dot");
+	inp = output_graphviz(gr, type);
+	
+	GVC_t *gvc;
+	gvc = gvContext();
+
+	Agraph_t *g;
+	g = agmemread(inp.c_str());
+
+	gvLayout(gvc, g, "dot");
+	gvRenderFilename(gvc, g, "png", file_name);
+	gvFreeLayout(gvc, g);
+
+	agclose(g);
+
+	gvFreeContext(gvc);
 }

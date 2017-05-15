@@ -7,9 +7,11 @@ int Ford(const char *file_name, graph *&gr, int &iterations, int in, int out)
 	// Open file
 	if ((f = fopen(file_name, "wt")) == NULL)
 	{
-		printf("Error opening file %s. Error code: %d\n", file_name, errno);
-		getch();
-		exit(1);
+		T_exception e;
+		e.code = 1;
+		e.text = "Не можливо відкрити файл ";
+		e.text += file_name;
+		throw(e);
 	}
 
 	// Give memory for visited vertexes
@@ -32,7 +34,20 @@ int Ford(const char *file_name, graph *&gr, int &iterations, int in, int out)
 		out = def_ss(1, gr);
 
 	if (in == -1 || out == -1)
-		exit(1);
+	{
+		T_exception e;
+		e.code = 3;
+		e.text = "Не можливо знайти стік або джерело мережі.";
+		e.solution = "Змініть граф, або вкажіть джерело та стік.";
+		throw(e);
+	}
+	else if (in >= gr->n_vertexes || out >= gr->n_vertexes)
+	{
+		T_exception e;
+		e.code = 3;
+		e.text = "Не правильно вказано джерело або стік мережі.";
+		throw(e);
+	}
 
 	c_stream = def_stream(gr, out);
 	fprintf(f, "\n Current stream of web = %d.\nSource vertex: %d.\nSink vertex: %d\n\n", c_stream, gr->v_n[in], gr->v_n[out]);
@@ -48,6 +63,14 @@ int Ford(const char *file_name, graph *&gr, int &iterations, int in, int out)
 
 	while (DFS_Ford(gr, in, out, cg_value, visited, head))
 	{
+		if (iter > MAX_ITER)
+		{
+			T_exception e;
+			e.code = 2;
+			e.text = "Алгоритм Форда-Фалкерсона перевищив максимальну кількість ітерацій.";
+			e.solution = "Змініть граф, або вкажіть джерело та стік.";
+			throw(e);
+		}
 		// Change streams
 		cg_stream(gr, cg_value, head, &f);
 		fprintf(f, "\nValued by which streams changed: %d\n", cg_value);
@@ -79,9 +102,11 @@ int Ford(const char *file_name, graph *&gr, int &iterations, int in, int out)
 	fprintf(f, "\n---------------Ford_Fulkerson_End---------------\n");
 	if (fclose(f))
 	{
-		printf("Error with closing the file: %s\n", file_name);
-		getch();
-		exit(1);
+		T_exception e;
+		e.code = 1;
+		e.text = "Не можливо закрити файл ";
+		e.text += file_name;
+		throw(e);
 	}
 
 	iterations = iter;
@@ -94,6 +119,7 @@ int Ford(FILE **f, graph *&gr, int in, int out)
 	bool *visited = new bool[gr->n_vertexes];
 	int cg_value = INF;	// Value by which stream can be changed
 	int c_stream;		// Current stream
+	int iter = 0;		// Current iteration
 
 	fprintf(*f, "\n--------------Ford Fulkerson Begin--------------\n");
 
@@ -105,6 +131,15 @@ int Ford(FILE **f, graph *&gr, int in, int out)
 		in = def_ss(0, gr);
 	if (out == -1)
 		out = def_ss(1, gr);
+
+	if (in == -1 || out == -1)
+	{
+		T_exception e;
+		e.code = 3;
+		e.text = "Не можливо знайти стік або джерело мережі.";
+		e.solution = "Змініть граф, або вкажіть джерело та стік.";
+		throw(e);
+	}
 
 	c_stream = def_stream(gr, out);
 	fprintf(*f, "\n Current stream of web = %d.\nSource vertex: %d.\nSink vertex: %d.\n\n", c_stream, gr->v_n[in], gr->v_n[out]);
@@ -120,6 +155,12 @@ int Ford(FILE **f, graph *&gr, int in, int out)
 
 	while (DFS_Ford(gr, in, out, cg_value, visited, head))
 	{
+		if (iter > MAX_ITER)
+		{
+			int e = 5;
+			throw(e);
+		}
+
 		// Change streams
 		cg_stream(gr, cg_value, head, f);
 		fprintf(*f, "\nValued by which streams changed: %d\n", cg_value);
@@ -133,7 +174,7 @@ int Ford(FILE **f, graph *&gr, int in, int out)
 		for (int i = 0; i < gr->n_vertexes; i++)
 			visited[i] = false;
 		visited[in] = true;
-
+		iter++;
 		cg_value = INF;
 	}
 

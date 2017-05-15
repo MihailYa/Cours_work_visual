@@ -10,4 +10,4 @@ struct T_list
 
 void add_e(T_list *&head, T_list *&tail, std::string dat);
 
-void free_list(T_list *&head, T_list *&tail);
+void free_list_(T_list *&head, T_list *&tail);

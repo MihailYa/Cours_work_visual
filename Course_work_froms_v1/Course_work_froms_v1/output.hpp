@@ -2,6 +2,8 @@
 
 #include "stdafx.hpp"
 #include "graph.hpp"
+#include "stdafx.hpp"
+#include <graphviz/gvc.h>
 
 /**
 * Output graph in file
@@ -24,6 +26,13 @@ void output_streams(graph *gr, FILE **f);
 * @type if graph is gr_result
 */
 void output_graphviz(graph *gr, FILE **f, bool type = false);
+
+/**
+* Output graph for graphviz
+* @gr pointer on graph
+* @type if graph is gr_result
+*/
+std::string output_graphviz(graph *gr, bool type = false);
 
 /**
 * Output graph as image in file_name

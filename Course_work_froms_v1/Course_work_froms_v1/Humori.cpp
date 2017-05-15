@@ -7,9 +7,11 @@ void Humori(char *file_name, graph *&gr)
 	// Open file
 	if ((f = fopen(file_name, "wt")) == NULL)
 	{
-		printf("Error opening file %s. Error code: %d\n", file_name, errno);
-		getch();
-		exit(1);
+		T_exception e;
+		e.code = 1;
+		e.text = "Не можливо відкрити файл ";
+		e.text += file_name;
+		throw(e);
 	}
 
 	gr->type = 0;
@@ -44,7 +46,7 @@ void Humori(char *file_name, graph *&gr)
 	// First graph and first vertex
 	graphs[0] = gr;
 
-	// Start recurs for gr_result
+	// Start recurs for gr_resultS
 	recurs_humori(gr_result, graphs, 0, &f);
 
 	// Rebuild result graph
@@ -52,9 +54,14 @@ void Humori(char *file_name, graph *&gr)
 	{
 		gr_result->edges[i].in = g_id(find_not_union_ver(graphs[gr_result->edges[i].in]), gr_result);
 		gr_result->edges[i].out = g_id(find_not_union_ver(graphs[gr_result->edges[i].out]), gr_result);
-		//----Develop
-		printf("%3d -> %3d | %d\n", gr_result->v_n[gr_result->edges[i].in], gr_result->v_n[gr_result->edges[i].out], gr_result->edges[i].stream);
-		//----Develop
+		if (gr_result->edges[i].in == -1 || gr_result->edges[i].out == -1)
+		{
+			T_exception e;
+			e.code = 1;
+			e.text = "Виникла помилка в алгоритмі Гуморі-Ху.";
+			e.solution = "Введіть інший граф.";
+			throw(e);
+		}
 	}
 
 	for (int i = 0; i < gr_result->n_edges; i++)
@@ -95,23 +102,16 @@ void Humori(char *file_name, graph *&gr)
 	fprintf(f, "\n\nMatrix of streams:\n");
 	output_streams(gr_result, &f);
 
-	//----Develop
-	for (int i = 0; i < gr_result->n_vertexes; i++)
-	{
-		for (int j = 0; j < gr_result->n_vertexes; j++)
-			printf("%7d", gr_result->streams[i][j]);
-		printf("\n");
-	}
-	//----Develop
-
 	gr = gr_result;
 
 	// Close file
 	if (fclose(f))
 	{
-		printf("Error with closing the file: %s\n", file_name);
-		getch();
-		exit(1);
+		T_exception e;
+		e.code = 1;
+		e.text = "Не можливо закрити файл ";
+		e.text += file_name;
+		throw(e);
 	}
 }
 
@@ -154,7 +154,19 @@ void recurs_humori(graph *&gr_result, graph **&graphs, int ver, FILE **f_output)
 	//Find two not UNION_VERTEX'es
 	int *vers = find_not_union_vers(graphs[ver]);
 	int max_stream;
-	max_stream = Ford(f_output, graphs[ver], vers[0], vers[1]);
+	try
+	{
+		max_stream = Ford(f_output, graphs[ver], vers[0], vers[1]);
+	}
+	catch (int &e)
+	{
+		T_exception ex;
+		ex.code = e;
+		ex.text = "Алгоритм Форда-Фалкерсона перевищив максимальну кількість ітерацій.";
+		ex.solution = "Змініть граф, або вкажіть джерело та стік.";
+		Humori_free(gr_result, graphs);
+		throw(ex);
+	}
 
 	// Recreate adjacent matrix
 	for (int i = 0; i < graphs[ver]->n_vertexes; i++)
@@ -165,17 +177,6 @@ void recurs_humori(graph *&gr_result, graph **&graphs, int ver, FILE **f_output)
 	int *vect;
 	vect = def_min_cut(graphs[ver], vers[0]);
 	delete[] vers;
-
-	//--------Develop--------
-	int k = 0;
-	printf("Min cut vector :\n");
-	while (vect[k] != -1)
-	{
-		printf("%d ", graphs[ver]->v_n[vect[k]]);
-		k++;
-	}
-	printf("\n");
-	//--------Develop--------
 
 	// Output minimum cut vertexes
 	int i = 0;
@@ -217,28 +218,6 @@ void recurs_humori(graph *&gr_result, graph **&graphs, int ver, FILE **f_output)
 	
 
 	//---------------------------------------------------------
-	//
-	//
-
-	//
-	// Rubish (my mistake)
-	/*
-	// dev: i think it must work
-	//
-	//
-	// ------------New change main graph "gr" by graph with "0" vertex---------------
-	// Free memory from old graph which is was given in function
-	delete_graph(gr);
-	// Set on his(^) place graph which 100% has "0" vertex
-	graphs[ver] = graphs[gr_result->n_vertexes - 2];
-	// Set on place this(^) graph, second half graph
-	graphs[gr_result->n_vertexes - 2] = graphs[gr_result->n_vertexes - 1];
-	graphs[gr_result->n_vertexes - 1] = NULL;
-	gr_result->n_vertexes--;
-	// ------------New change-------------
-	//
-	//
-	*/
 	//
 	//
 
@@ -350,26 +329,6 @@ bool find_union_ver(graph *gr, int name)
 
 void cg_adj(graph *&gr_result, graph **graphs, int ver, int *vect)
 {
-	//-----Develop
-	/*printf("\n----------------------\n");
-	output(gr_result);
-
-	for (int i = 0; i < gr_result->n_vertexes; i++)
-	{
-		for (int j = 0; j < gr_result->n_vertexes; j++)
-		{
-			printf("%2d", gr_result->adj_m[i][j]);
-		}
-		printf("\n");
-	}
-
-	for (int i = 0; i < gr_result->n_vertexes; i++)
-	{
-		printf("\nGraphs[%d]:\n", i);
-		output(graphs[i]);
-	}*/
-	//-----Develop
-
 	// Current edge
 	int cur_e;
 
@@ -390,19 +349,6 @@ void cg_adj(graph *&gr_result, graph **graphs, int ver, int *vect)
 			gr_result->edges[cur_e].in = i;
 			gr_result->edges[cur_e].out = gr_result->n_vertexes - 1;
 		}
-
-		// If first half was moved and hold "i" UNION_VERTEX
-		/*if (!find_union_ver(graphs[i], UNION_VERTEX+ver))
-		{
-		gr_result->adj_m[i][ver] = 0;
-		gr_result->adj_m[ver][i] = 0;
-		gr_result->adj_m[gr_result->n_vertexes - 1][i] = 1;
-		gr_result->adj_m[i][gr_result->n_vertexes - 1] = 1;
-
-		gr_result->edges[g_e(i, ver, gr_result)].in = i;
-		gr_result->edges[g_e(i, ver, gr_result)].out = gr_result->n_vertexes - 1;
-		}*/
-		//if(!find_in_vect)
 	}
 }
 
@@ -418,15 +364,6 @@ graph* condense(graph *&gr, bool half, int* vect, int ver)
 	// Create adjacent matrix
 	if (gr->adj_m == NULL)
 		gr->adj_m = adj(gr);
-
-	//-----Develop
-	for (int i = 0; i < gr->n_vertexes; i++)
-	{
-		for (int j = 0; j < gr->n_vertexes; j++)
-			printf("%3d", gr->adj_m[i][j]);
-		printf("\n");
-	}
-	//-----Develop
 
 	int c_e; // Current edge
 
@@ -556,21 +493,6 @@ graph* condense(graph *&gr, bool half, int* vect, int ver)
 	for (int i = 0; i < result->n_edges; i++)
 		result->edges[i].stream = 0;
 
-	//--------Develop--------
-	printf("Half: %d\n", half);
-	printf("Vertexes: %d; Edges: %d;\n\nEdges:\nin | out | pass_abl | stream\n", result->n_vertexes, result->n_edges);
-	for (int i = 0; i < result->n_edges; i++)
-	{
-		printf("%d -> %d | %d | %d\n", result->v_n[result->edges[i].in], result->v_n[result->edges[i].out], result->edges[i].pass_abl, result->edges[i].stream);
-	}
-	printf("\nNumber | Name\n");
-	for (int i = 0; i < result->n_vertexes; i++)
-	{
-		printf("%-2d | %-2d\n", i, result->v_n[i]);
-	}
-	printf("\n\n");
-	//--------Develop--------
-
 	return result;
 }
 
@@ -619,29 +541,6 @@ int* def_min_cut(graph* gr, int in)
 			}
 		}
 	}
-
-	/*while (!cycle_end)
-	{
-	cycle_end = 1;
-	for (int i = 0; i < gr->n_vertexes; i++)
-	{
-	edge_n = g_e(c_v, i, gr);
-	if (
-	(!visit[i] && gr->adj_m[c_v][i] && (gr->edges[edge_n].stream < gr->edges[edge_n].pass_abl))
-	||
-	(!visit[i] && (gr->adj_m[i][c_v] && gr->edges[edge_n].pass_abl != 0 && gr->type))
-	)
-	{
-	visit[i] = 1;
-	result[j] = i;
-	c_v = i;
-	j++;
-	cycle_end = 0;
-	break;
-	}
-	}
-	}*/
-
 	delete[] visit;
 	return result;
 }
@@ -680,4 +579,17 @@ void DFS_Humori(graph *&gr, int start, int prev, int in, int min)
 			}
 		}
 	}
+}
+
+void Humori_free(graph *&gr_result, graph **&graphs)
+{
+	for (int i = 0; i < gr_result->n_vertexes; i++)
+	{
+		delete_graph(graphs[i]);
+	}
+	delete[] *graphs;
+	graphs = NULL;
+
+	delete_graph(gr_result);
+	gr_result = NULL;
 }

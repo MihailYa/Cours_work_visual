@@ -95,3 +95,10 @@ bool find_in_vect(int *vect, int num);
 * @min minimum stream
 */
 void DFS_Humori(graph *&gr, int start, int prev, int in, int min);
+
+/**
+* Free memory
+* @gr_result pointer on result graph
+* @graphs pointer on array of graphs
+*/
+void Humori_free(graph *&gr_result, graph **&graphs);
