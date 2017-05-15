@@ -21,9 +21,10 @@ int get_e(T_stack *&head)
 {
 	if (head == NULL)
 	{
-		printf("\nError: empty head of stack.\n");
-		getch();
-		exit(1);
+		T_exception e;
+		e.text = "Ïóñòèé ñòåê.";
+		e.code = 8;
+		throw(e);
 	}
 
 	int data = head->data;

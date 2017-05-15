@@ -45,9 +45,6 @@
     <ClCompile Include="MyForm_.cpp">
       <Filter>Header Files</Filter>
     </ClCompile>
-    <ClCompile Include="list.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="PictureForm.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
@@ -87,9 +84,6 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="MyForm_.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="list.hpp">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="PictureForm.h">

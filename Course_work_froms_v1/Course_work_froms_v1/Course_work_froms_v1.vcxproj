@@ -89,7 +89,7 @@
       <WarningLevel>Level3</WarningLevel>
       <Optimization>Disabled</Optimization>
       <PreprocessorDefinitions>WIN32;_DEBUG;%(PreprocessorDefinitions)</PreprocessorDefinitions>
-      <AdditionalIncludeDirectories>C:\Program Files %28x86%29\Graphviz2.38\include;C:\Users\MikleYa\Documents\Visual Studio 2015\boost_1_64_0;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>C:\Program Files %28x86%29\Graphviz2.38\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <PrecompiledHeaderFile>stdafx.hpp</PrecompiledHeaderFile>
     </ClCompile>
     <Link>
@@ -116,10 +116,11 @@
       <WarningLevel>Level3</WarningLevel>
       <PreprocessorDefinitions>WIN32;NDEBUG;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <AdditionalIncludeDirectories>C:\Program Files %28x86%29\Graphviz2.38\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <PrecompiledHeaderFile>stdafx.hpp</PrecompiledHeaderFile>
     </ClCompile>
     <Link>
       <GenerateDebugInformation>true</GenerateDebugInformation>
-      <AdditionalDependencies>dot.lib;gvc.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>dot.lib;gvc.lib;cdt.lib;cgraph.lib;%(AdditionalDependencies)</AdditionalDependencies>
       <AdditionalLibraryDirectories>C:\Program Files %28x86%29\Graphviz2.38\lib\release\lib;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
     </Link>
   </ItemDefinitionGroup>
@@ -146,7 +147,6 @@
     <ClCompile Include="graph.cpp" />
     <ClCompile Include="Humori.cpp" />
     <ClCompile Include="input.cpp" />
-    <ClCompile Include="list.cpp" />
     <ClCompile Include="MyForm.cpp" />
     <ClCompile Include="MyForm_.cpp" />
     <ClCompile Include="output.cpp" />
@@ -162,7 +162,6 @@
     <ClInclude Include="graph.hpp" />
     <ClInclude Include="Humori.hpp" />
     <ClInclude Include="input.hpp" />
-    <ClInclude Include="list.hpp" />
     <ClInclude Include="MyForm.h">
       <FileType>CppForm</FileType>
     </ClInclude>

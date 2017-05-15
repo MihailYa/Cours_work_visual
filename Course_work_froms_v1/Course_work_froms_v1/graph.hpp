@@ -41,7 +41,6 @@ struct graph
 	bool type;
 	int n_vertexes;
 	int n_edges;
-	int *v_id;
 	int *v_n;
 	edge *edges;
 	bool **adj_m;

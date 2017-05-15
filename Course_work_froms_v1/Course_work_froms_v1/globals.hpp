@@ -12,6 +12,9 @@
 * 3 - Ford: can't found source or sink
 * 4 - Error with input information in form
 * 5 - Too many iterations in Humori Ford
+* 6 - Something wrong with mode parametr of Form_ class
+* 7 - Problem with queue
+* 8 - Problem with stack
 */
 struct T_exception
 {

@@ -2,15 +2,10 @@
 #include "Humori.hpp"
 #include "Ford.hpp"
 #include "stdafx.hpp"
-#include "list.hpp"
 #include "PictureForm.h"
 
 #define OUTPUT_DIR "output"
 
-static T_list *Ford_head;
-static T_list *Ford_tail;
-static T_list *Humori_head;
-static T_list *Humori_tail;
 static std::string ford_text;
 static std::string humori_text;
 
@@ -40,14 +35,13 @@ namespace Course_work_froms_v1 {
 			pbox1 = new char[40];
 			pbox2 = new char[40];
 			
-			//system("RD /S /Q " OUTPUT_DIR);
 			Remove_Directory();
 			CreateDirectory(L"" OUTPUT_DIR, NULL);
 			chdir(OUTPUT_DIR);
 			FILE *f;
 			long int file_size;
 			char *tmp;
-			time_t start, end;
+			clock_t t;
 			try
 			{
 				switch (mode)
@@ -59,13 +53,13 @@ namespace Course_work_froms_v1 {
 					strcpy(pbox1, "Input.png");
 					pictureBox1->Image = Image::FromFile("Input.png");
 					int iters;
-					start = time(0);
+					t = clock();
 					if (ss)
 						Ford("Ford.txt", gr, iters, vers[0] - 1, vers[1] - 1);
 					else
 						Ford("Ford.txt", gr, iters);
-					end = time(0);
-					time_ford = difftime(end, start)*1000.;
+					t = clock() - t;
+					time_ford = ((float)t)/CLOCKS_PER_SEC;
 
 					if ((f = fopen("Ford.txt", "rb")) == NULL)
 					{
@@ -108,16 +102,18 @@ namespace Course_work_froms_v1 {
 					}
 
 					graphviz("Input.png", gr);
-					//pictureBox1->Image = Image::FromFile("Input.png");
 
-					start = time(0);
+					t = clock();
 					Humori("Humori_result.txt", gr);
-					end = time(0);
-					time_humori = difftime(end, start)*1000.;
+					t = clock() - t;
+					time_humori = ((float)t) / CLOCKS_PER_SEC;
 
 					if ((f = fopen("Humori_result.txt", "rb")) == NULL)
 					{
-						exit(1);
+						T_exception e;
+						e.code = 1;
+						e.text = "Не можливо відкрити файл Humori_result.txt";
+						throw(e);
 					}
 					fseek(f, 0, SEEK_END);
 					file_size = ftell(f);
@@ -126,7 +122,14 @@ namespace Course_work_froms_v1 {
 					tmp = new char[file_size + 1];
 					fread(tmp, file_size, 1, f);
 
-					fclose(f);
+					if (fclose(f))
+					{
+						T_exception e;
+						e.code = 1;
+						e.text = "Не можливо закрити файл Humori_result.txt";
+						throw(e);
+					}
+
 					tmp[file_size] = '\0';
 					this->richTextBox1->Text = gcnew String(tmp);
 					humori_text = tmp;
@@ -150,20 +153,22 @@ namespace Course_work_froms_v1 {
 				case 2:
 				{
 					graphviz("Input.png", gr);
-					//pictureBox1->Image = Image::FromFile("Input.png");
 					int iters;
 
-					start = time(0);
+					t = clock();
 					if (ss)
 						Ford("Ford.txt", gr, iters, vers[0] - 1, vers[1] - 1);
 					else
 						Ford("Ford.txt", gr, iters);
-					end = time(0);
-					time_ford = difftime(end, start)*1000.;
+					t = clock() - t;
+					time_ford = ((float)t) / CLOCKS_PER_SEC;
 
 					if ((f = fopen("Ford.txt", "rb")) == NULL)
 					{
-						exit(1);
+						T_exception e;
+						e.code = 1;
+						e.text = "Не можливо відкрити файл Ford.txt";
+						throw(e);
 					}
 
 					fseek(f, 0, SEEK_END);
@@ -173,7 +178,14 @@ namespace Course_work_froms_v1 {
 					tmp = new char[file_size + 1];
 					fread(tmp, file_size, 1, f);
 
-					fclose(f);
+					if (fclose(f))
+					{
+						T_exception e;
+						e.code = 1;
+						e.text = "Не можливо закрити файл Ford.txt";
+						throw(e);
+					}
+
 					tmp[file_size] = '\0';
 					ford_text = tmp;
 					delete[] tmp;
@@ -192,15 +204,19 @@ namespace Course_work_froms_v1 {
 
 					gr->type = false;
 
-					start = time(0);
+					t = clock();
 					Humori("Humori_result.txt", gr);
-					end = time(0);
-					time_humori = difftime(end, start)*1000.;
+					t = clock() - t;
+					time_humori = ((float)t) / CLOCKS_PER_SEC;
 
 					if ((f = fopen("Humori_result.txt", "rb")) == NULL)
 					{
-						exit(1);
+						T_exception e;
+						e.code = 1;
+						e.text = "Не можливо відкрити файл Humori_result.txt";
+						throw(e);
 					}
+
 					fseek(f, 0, SEEK_END);
 					file_size = ftell(f);
 					rewind(f);
@@ -208,7 +224,14 @@ namespace Course_work_froms_v1 {
 					tmp = new char[file_size + 1];
 					fread(tmp, file_size, 1, f);
 
-					fclose(f);
+					if (fclose(f))
+					{
+						T_exception e;
+						e.code = 1;
+						e.text = "Не можливо закрити файл Humori_result.txt";
+						throw(e);
+					}
+
 					tmp[file_size] = '\0';
 					humori_text = tmp;
 					delete[] tmp;
@@ -228,7 +251,10 @@ namespace Course_work_froms_v1 {
 				}
 				default:
 				{
-					exit(1);
+					T_exception e;
+					e.code = 6;
+					e.text = "Щось не так з вхідними параметрами.";
+					throw(e);
 					break;
 				}
 				}
@@ -239,7 +265,7 @@ namespace Course_work_froms_v1 {
 					MessageBox::Show(gcnew String(("Помилка: " + e.text + "\nМожливе рішення: " + e.solution).c_str()), "Error", MessageBoxButtons::OK, MessageBoxIcon::Error);
 				else
 					MessageBox::Show(gcnew String(("Помилка: " + e.text).c_str()), "Error", MessageBoxButtons::OK, MessageBoxIcon::Error);
-				if(e.code != 5)
+				if (e.code != 5 && e.code != 7)
 					delete_graph(gr);
 				this->~MyForm_();
 				chdir("../");
@@ -263,8 +289,6 @@ namespace Course_work_froms_v1 {
 			}
 			delete[] pbox1;
 			delete[] pbox2;
-			free_list_(Ford_head, Ford_tail);
-			free_list_(Humori_head, Humori_tail);
 		}
 
 
@@ -293,10 +317,6 @@ namespace Course_work_froms_v1 {
 		char *pbox2;
 		double time_ford;
 		double time_humori;
-
-
-		 
-
 
 #pragma region Windows Form Designer generated code
 		/// <summary>
@@ -433,7 +453,7 @@ namespace Course_work_froms_v1 {
 			// label4
 			// 
 			this->label4->AutoSize = true;
-			this->label4->Location = System::Drawing::Point(293, 69);
+			this->label4->Location = System::Drawing::Point(314, 44);
 			this->label4->Name = L"label4";
 			this->label4->Size = System::Drawing::Size(51, 20);
 			this->label4->TabIndex = 11;

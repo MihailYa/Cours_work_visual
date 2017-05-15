@@ -1,6 +1,7 @@
 #pragma once
 
 #include "stdafx.hpp"
+#include "globals.hpp"
 
 struct T_stack
 {

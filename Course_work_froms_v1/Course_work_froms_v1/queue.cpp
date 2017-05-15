@@ -22,9 +22,10 @@ int get_e(T_queue *&head, T_queue *&tail)
 {
 	if (head == NULL)
 	{
-		printf("\nError: empty head of queue.\n");
-		getch();
-		exit(1);
+		T_exception e;
+		e.text = "Ïóñòà ÷åğãà.";
+		e.code = 7;
+		throw(e);
 	}
 
 	int data = head->data;
