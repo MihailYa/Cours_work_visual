@@ -23,7 +23,7 @@ Class Course_work_froms_v1.PictureForm: AutoLayout, AnsiClass, Class, Public, Be
     Void .ctor(SByte*): PrivateScope, Public, HideBySig, SpecialName, RTSpecialName
 Class Course_work_froms_v1.MyForm_: AutoLayout, AnsiClass, Class, Public, BeforeFieldInit
   :System.Windows.Forms.Form
-    Void .ctor(Int32, graph**, Int32*, Boolean): PrivateScope, Public, HideBySig, SpecialName, RTSpecialName
+    Void .ctor(Int32, coursework.graph**, Int32*, Boolean): PrivateScope, Public, HideBySig, SpecialName, RTSpecialName
 Class Course_work_froms_v1.MyForm: AutoLayout, AnsiClass, Class, Public, BeforeFieldInit
   :System.Windows.Forms.Form
     Void .ctor(): PrivateScope, Public, HideBySig, SpecialName, RTSpecialName

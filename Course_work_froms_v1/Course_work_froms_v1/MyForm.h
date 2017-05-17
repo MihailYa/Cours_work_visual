@@ -6,6 +6,7 @@
 
 namespace Course_work_froms_v1 {
 
+	using namespace coursework;
 	using namespace System;
 	using namespace System::ComponentModel;
 	using namespace System::Collections;
