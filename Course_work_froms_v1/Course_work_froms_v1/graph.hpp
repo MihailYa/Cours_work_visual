@@ -8,7 +8,7 @@ namespace coursework
 {
 
 	/**
-	* Struct of edge
+	* Structure of edge
 	* @out begin of edge
 	* @in end of edge
 	* @stream current stream in edge
@@ -28,6 +28,11 @@ namespace coursework
 		bool orient;
 	};
 
+	/**
+	* Structure of vertex
+	* @v name of vertex
+	* @union_v if vertex is union
+	*/
 	struct T_vertex
 	{
 		int v;
@@ -35,7 +40,7 @@ namespace coursework
 	};
 
 	/**
-	* Struct of graph
+	* Structure of graph
 	* @type type of graph(1 - oriented, 0 - unoriented)
 	* @n_vertexes number of vertexes
 	* @n_edges number of edges
@@ -58,46 +63,46 @@ namespace coursework
 
 	/**
 	* Create dynamic graph
-	* @n_vertexes number of vertex
-	* @n_edges number of edges
-	* @or if graph oriented
+	* @param n_vertexes number of vertex
+	* @param n_edges number of edges
+	* @param or if graph oriented
 	*/
 	graph* create_graph(int n_vertexes, int n_edges, bool or = 0);
 
 	/**
 	* Delete dynamic graph
-	* @gr pointer on graph
+	* @param gr pointer on graph
 	*/
 	void delete_graph(graph *&gr);
 
 	/**
 	* Get number of edge
-	* @out begin of edge
-	* @in end of edge
-	* @gr graph
-	* @or oriented graph (default = 0)
+	* @param out begin of edge
+	* @param in end of edge
+	* @param gr graph
+	* @param or oriented graph (default = 0)
 	* @return number of edge
 	*/
 	int g_e(int out, int in, graph *gr, bool or = 0);
 
 	/**
 	* Get id of vertex by name
-	* @ver vertex info
-	* @gr pointer on gr
+	* @param ver vertex info
+	* @param gr pointer on gr
 	* @return id if found and -1 if not found
 	*/
 	int g_id(T_vertex ver, graph *gr);
 
 	/**
 	* Get name of vertex
-	* @ver data of vertex
-	* @buf char buffer
+	* @param ver data of vertex
+	* @param buf char buffer
 	*/
 	char* g_n(T_vertex ver, char *buf);
 
 	/**
 	* Define adjacencies matrix
-	* @gr graph
+	* @param gr graph
 	* @return pointer on adjacencies matrix
 	*/
 	bool** adj(graph *gr);

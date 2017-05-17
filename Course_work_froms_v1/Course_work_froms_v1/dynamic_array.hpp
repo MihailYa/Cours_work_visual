@@ -5,8 +5,8 @@ namespace coursework
 
 	/**
 	* Create dynamic array n x m
-	* @n rows
-	* @m cols
+	* @param n rows
+	* @param m cols
 	* @return pointer on array
 	*/
 	template<typename T>
@@ -22,8 +22,8 @@ namespace coursework
 
 	/**
 	* Delete dynamic array n x m
-	* @ar array n x m
-	* @n rows
+	* @param ar array n x m
+	* @param n rows
 	* @return pointer on array
 	*/
 	template<typename T>

@@ -156,7 +156,7 @@ New way can't be found.
  Maximum stream = 24.
 ---------------Ford Fulkerson End---------------
 
-Vertex in minimum cut of current graph:
+Vertices in minimum cut of current graph:
 1 6 5 
 
 First condensed graph:
@@ -250,7 +250,7 @@ New way can't be found.
  Maximum stream = 23.
 ---------------Ford Fulkerson End---------------
 
-Vertex in minimum cut of current graph:
+Vertices in minimum cut of current graph:
 2 4 S1 
 
 First condensed graph:
@@ -356,7 +356,7 @@ New way can't be found.
  Maximum stream = 30.
 ---------------Ford Fulkerson End---------------
 
-Vertex in minimum cut of current graph:
+Vertices in minimum cut of current graph:
 2 S2 S1 
 
 First condensed graph:
@@ -445,7 +445,7 @@ New way can't be found.
  Maximum stream = 19.
 ---------------Ford Fulkerson End---------------
 
-Vertex in minimum cut of current graph:
+Vertices in minimum cut of current graph:
 5 
 
 First condensed graph:
@@ -551,7 +551,7 @@ New way can't be found.
  Maximum stream = 23.
 ---------------Ford Fulkerson End---------------
 
-Vertex in minimum cut of current graph:
+Vertices in minimum cut of current graph:
 1 S1 S4 
 
 First condensed graph:

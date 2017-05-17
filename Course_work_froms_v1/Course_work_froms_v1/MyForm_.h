@@ -1,5 +1,5 @@
 #pragma once
-#include "Humori.hpp"
+#include "Gomory.hpp"
 #include "Ford.hpp"
 #include "stdafx.hpp"
 #include "PictureForm.h"
@@ -7,7 +7,7 @@
 #define OUTPUT_DIR "output"
 
 static std::string ford_text;
-static std::string humori_text;
+static std::string Gomory_text;
 
 namespace Course_work_froms_v1 {
 
@@ -27,8 +27,8 @@ namespace Course_work_froms_v1 {
 	{
 	public:
 		/**
-		* @mode 0 - Ford, 1 - Humori, 2 - both
-		* @gr pointer on graph
+		* @param mode 0 - Ford, 1 - Gomory, 2 - both
+		* @param gr pointer on graph
 		*/
 		MyForm_(int mode, graph *&gr, int vers[2], bool ss)
 		{
@@ -105,15 +105,15 @@ namespace Course_work_froms_v1 {
 					graphviz("Input.png", gr);
 
 					t = clock();
-					Humori("Humori_result.txt", gr);
+					Gomory("Gomory_result.txt", gr);
 					t = clock() - t;
-					time_humori = ((float)t) / CLOCKS_PER_SEC;
+					time_Gomory = ((float)t) / CLOCKS_PER_SEC;
 
-					if ((f = fopen("Humori_result.txt", "rb")) == NULL)
+					if ((f = fopen("Gomory_result.txt", "rb")) == NULL)
 					{
 						T_exception e;
 						e.code = 1;
-						e.text = "Не можливо відкрити файл Humori_result.txt";
+						e.text = "Не можливо відкрити файл Gomory_result.txt";
 						throw(e);
 					}
 					fseek(f, 0, SEEK_END);
@@ -127,16 +127,16 @@ namespace Course_work_froms_v1 {
 					{
 						T_exception e;
 						e.code = 1;
-						e.text = "Не можливо закрити файл Humori_result.txt";
+						e.text = "Не можливо закрити файл Gomory_result.txt";
 						throw(e);
 					}
 
 					tmp[file_size] = '\0';
 					this->richTextBox1->Text = gcnew String(tmp);
-					humori_text = tmp;
+					Gomory_text = tmp;
 					delete[] tmp;
 
-					slides_humori = gr->n_vertexes - 1;
+					slides_Gomory = gr->n_vertexes - 1;
 					c_slide = 1;
 					half = -1;
 
@@ -195,7 +195,7 @@ namespace Course_work_froms_v1 {
 					c_slide = 1;
 
 					//
-					// Humori
+					// Gomory
 					//
 					for (int i = 0; i < gr->n_edges; i++)
 					{
@@ -206,15 +206,15 @@ namespace Course_work_froms_v1 {
 					gr->type = false;
 
 					t = clock();
-					Humori("Humori_result.txt", gr);
+					Gomory("Gomory_result.txt", gr);
 					t = clock() - t;
-					time_humori = ((float)t) / CLOCKS_PER_SEC;
+					time_Gomory = ((float)t) / CLOCKS_PER_SEC;
 
-					if ((f = fopen("Humori_result.txt", "rb")) == NULL)
+					if ((f = fopen("Gomory_result.txt", "rb")) == NULL)
 					{
 						T_exception e;
 						e.code = 1;
-						e.text = "Не можливо відкрити файл Humori_result.txt";
+						e.text = "Не можливо відкрити файл Gomory_result.txt";
 						throw(e);
 					}
 
@@ -229,15 +229,15 @@ namespace Course_work_froms_v1 {
 					{
 						T_exception e;
 						e.code = 1;
-						e.text = "Не можливо закрити файл Humori_result.txt";
+						e.text = "Не можливо закрити файл Gomory_result.txt";
 						throw(e);
 					}
 
 					tmp[file_size] = '\0';
-					humori_text = tmp;
+					Gomory_text = tmp;
 					delete[] tmp;
 
-					slides_humori = gr->n_vertexes - 1;
+					slides_Gomory = gr->n_vertexes - 1;
 
 					this->radioButton1->Checked = true;
 					this->radioButton1->Enabled = true;
@@ -311,13 +311,13 @@ namespace Course_work_froms_v1 {
 		/// <summary>
 		/// </summary>
 		int slides_ford;
-		int slides_humori;
+		int slides_Gomory;
 		int c_slide;
 		int half;
 		char *pbox1;
 		char *pbox2;
 		double time_ford;
-		double time_humori;
+		double time_Gomory;
 
 #pragma region Windows Form Designer generated code
 		/// <summary>
@@ -588,7 +588,7 @@ namespace Course_work_froms_v1 {
 				}
 				else if (half == 2)
 				{
-					strcpy(temp, OUTPUT_DIR "/Humori_result.png");
+					strcpy(temp, OUTPUT_DIR "/Gomory_result.png");
 					strcpy(pbox2, temp);
 					this->pictureBox2->Image = Image::FromFile(gcnew String(temp));
 					strcpy(temp, "Кінцевий граф.");
@@ -596,7 +596,7 @@ namespace Course_work_froms_v1 {
 				}
 				if (half != 2)
 				{
-					strcpy(temp, OUTPUT_DIR "/Humori_Graph_");
+					strcpy(temp, OUTPUT_DIR "/Gomory_Graph_");
 					strcat(temp, buf);
 					strcat(temp, ".png");
 					strcpy(pbox1, temp);
@@ -636,7 +636,7 @@ namespace Course_work_froms_v1 {
 				}
 
 				c_slide++;
-				if (c_slide > slides_humori)
+				if (c_slide > slides_Gomory)
 				{
 					half = 2;
 				}
@@ -657,7 +657,7 @@ namespace Course_work_froms_v1 {
 			{
 				if (half == 2)
 				{
-					c_slide = slides_humori;
+					c_slide = slides_Gomory;
 					half = 1;
 					Change_Slide();
 					return;
@@ -684,16 +684,16 @@ namespace Course_work_froms_v1 {
 		private: System::Void radioButton2_Click(System::Object^  sender, System::EventArgs^  e) {
 			half = -1;
 			c_slide = 1;
-			this->richTextBox1->Text = gcnew String(humori_text.c_str());
+			this->richTextBox1->Text = gcnew String(Gomory_text.c_str());
 
 			char temp[100];
 			char buf[10];
 
-			sprintf(buf, "%f", time_humori);
+			sprintf(buf, "%f", time_Gomory);
 			strcpy(temp, "Час роботи алгоритму: ");
 			strcat(temp, buf);
 			strcat(temp, "\nКількість ітерацій: ");
-			itoa(slides_humori, buf, 10);
+			itoa(slides_Gomory, buf, 10);
 			strcat(temp, buf);
 			this->label4->Text = gcnew String(temp);
 			Change_Slide();

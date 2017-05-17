@@ -5,6 +5,7 @@ namespace coursework
 
 	graph* create_graph(int n_vertexes, int n_edges, bool or )
 	{
+		// Create dynamic values
 		graph *result = new graph;
 		result->edges = new edge[n_edges];
 		result->v_n = new T_vertex[n_vertexes];
@@ -15,6 +16,7 @@ namespace coursework
 		result->adj_m = NULL;
 		result->streams = NULL;
 
+		// Init
 		for (int i = 0; i < n_vertexes; i++)
 		{
 			result->v_n[i].v = -1;
@@ -31,6 +33,7 @@ namespace coursework
 
 	void delete_graph(graph *&gr)
 	{
+		// Delete dynamic values
 		delete[] gr->edges;
 		delete[] gr->v_n;
 		if (gr->adj_m != NULL)
@@ -74,7 +77,9 @@ namespace coursework
 
 	bool** adj(graph *gr)
 	{
+		// Create dynamic array
 		bool **sum_matrix = create_array<bool>(gr->n_vertexes, gr->n_vertexes);
+
 		// Init by 0
 		for (int i = 0; i < gr->n_vertexes; i++)
 			for (int j = 0; j < gr->n_vertexes; j++)

@@ -13,7 +13,7 @@ namespace coursework
 	* 2 - Ford algorithm make too many iterations( > MAX_ITER)
 	* 3 - Ford: can't found source or sink
 	* 4 - Error with input information in form
-	* 5 - Too many iterations in Humori Ford
+	* 5 - Too many iterations in Gomory Ford
 	* 6 - Something wrong with mode parametr of Form_ class
 	* 7 - Problem with queue
 	* 8 - Problem with stack

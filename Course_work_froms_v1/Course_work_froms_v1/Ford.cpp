@@ -52,6 +52,7 @@ namespace coursework
 			throw(e);
 		}
 
+		// Define current stream
 		c_stream = def_stream(gr, out);
 		fprintf(f, "\n Current stream of web = %d.\nSource vertex: %s.\nSink vertex: %s\n\n", c_stream, g_n(gr->v_n[in], buf), g_n(gr->v_n[out], buf));
 
@@ -59,6 +60,7 @@ namespace coursework
 		T_stack *head = NULL;
 		T_stack_dat dat;
 
+		// Init
 		for (int i = 0; i < gr->n_vertexes; i++)
 			visited[i] = false;
 		visited[in] = true;
@@ -67,8 +69,10 @@ namespace coursework
 		dat.orient = true;
 		add_e(head, dat);
 
+		// Algorithm
 		while (DFS_Ford(gr, in, out, cg_value, visited, head))
 		{
+			// If too many iterations
 			if (iter > MAX_ITER)
 			{
 				T_exception e;
@@ -77,15 +81,18 @@ namespace coursework
 				e.solution = "«м≥н≥ть граф, або вкаж≥ть джерело та ст≥к.";
 				throw(e);
 			}
+
 			// Change streams
 			cg_stream(gr, cg_value, head, &f);
 			fprintf(f, "\nValued by which streams changed: %d\n", cg_value);
 			fprintf(f, "\nCurrent streams:\n");
 			output(gr, &f);
 
+			// Define current stream of web
 			c_stream = def_stream(gr, out);
 			fprintf(f, "\n Current stream of web = %d\n\n", c_stream);
 
+			// Init
 			dat.v = in;
 			dat.orient = true;
 			add_e(head, dat);
@@ -96,6 +103,7 @@ namespace coursework
 			cg_value = INF;
 
 			iter++;
+
 			// Draw current graph
 			strcpy(name_of_file, "Ford_Iteration_");
 			itoa(iter, buf, 10);
@@ -150,6 +158,7 @@ namespace coursework
 			throw(e);
 		}
 
+		// Define current stream of web
 		c_stream = def_stream(gr, out);
 		fprintf(*f, "\n Current stream of web = %d.\nSource vertex: %s.\nSink vertex: %s.\n\n", c_stream, g_n(gr->v_n[in], buf), g_n(gr->v_n[out], buf));
 
@@ -157,6 +166,7 @@ namespace coursework
 		T_stack *head = NULL;
 		T_stack_dat dat;
 
+		// Init
 		for (int i = 0; i < gr->n_vertexes; i++)
 			visited[i] = false;
 		visited[in] = true;
@@ -165,6 +175,7 @@ namespace coursework
 		dat.orient = true;
 		add_e(head, dat);
 
+		// Algorithm
 		while (DFS_Ford(gr, in, out, cg_value, visited, head))
 		{
 			if (iter > MAX_ITER)
@@ -179,9 +190,11 @@ namespace coursework
 			fprintf(*f, "\nCurrent streams:\n");
 			output(gr, f);
 
+			// Define current stream
 			c_stream = def_stream(gr, out);
 			fprintf(*f, "\n Current stream of web = %d\n\n", c_stream);
 
+			// Init
 			dat.v = in;
 			dat.orient = true;
 			add_e(head, dat);
@@ -279,6 +292,8 @@ namespace coursework
 				if ((!mode && gr->adj_m[j][i]) || (mode && gr->adj_m[i][j]))
 					check = 0;
 			}
+
+			// If we found sink/source
 			if (check) return i;
 		}
 
@@ -298,14 +313,19 @@ namespace coursework
 
 	void cg_stream(graph *&gr, int value, T_stack *&head, FILE **f)
 	{
-		T_stack_dat out;
-		T_stack_dat in = get_e(head);
-		char buf[10];
+		T_stack_dat out;				// Out vertex of edge
+		T_stack_dat in = get_e(head);	// In vertex of edge
+		char buf[10];					// Char buffer
+
 		fprintf(*f, "\nFound way:\n");
 		while (head != NULL)
 		{
 			out = in;
+
+			// Get element from stack
 			in = get_e(head);
+
+			// If it is not oriented way
 			if (!out.orient)
 			{
 				fprintf(*f, "%s -> ", g_n(gr->v_n[out.v], buf));

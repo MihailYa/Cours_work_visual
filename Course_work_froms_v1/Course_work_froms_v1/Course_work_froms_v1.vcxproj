@@ -24,6 +24,7 @@
     <Keyword>ManagedCProj</Keyword>
     <RootNamespace>Course_work_froms_v1</RootNamespace>
     <WindowsTargetPlatformVersion>8.1</WindowsTargetPlatformVersion>
+    <ProjectName>Humori-Hu and Ford-Fulkerson</ProjectName>
   </PropertyGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="Configuration">
@@ -122,6 +123,8 @@
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <AdditionalDependencies>dot.lib;gvc.lib;cdt.lib;cgraph.lib;%(AdditionalDependencies)</AdditionalDependencies>
       <AdditionalLibraryDirectories>C:\Program Files %28x86%29\Graphviz2.38\lib\release\lib;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <EntryPointSymbol>Main</EntryPointSymbol>
+      <SubSystem>Windows</SubSystem>
     </Link>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
@@ -145,7 +148,7 @@
   <ItemGroup>
     <ClCompile Include="Ford.cpp" />
     <ClCompile Include="graph.cpp" />
-    <ClCompile Include="Humori.cpp" />
+    <ClCompile Include="Gomory.cpp" />
     <ClCompile Include="input.cpp" />
     <ClCompile Include="MyForm.cpp" />
     <ClCompile Include="MyForm_.cpp" />
@@ -160,7 +163,7 @@
     <ClInclude Include="Ford.hpp" />
     <ClInclude Include="globals.hpp" />
     <ClInclude Include="graph.hpp" />
-    <ClInclude Include="Humori.hpp" />
+    <ClInclude Include="Gomory.hpp" />
     <ClInclude Include="input.hpp" />
     <ClInclude Include="MyForm.h">
       <FileType>CppForm</FileType>

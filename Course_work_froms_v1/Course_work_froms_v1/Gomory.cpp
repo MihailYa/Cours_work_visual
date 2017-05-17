@@ -1,9 +1,9 @@
-#include "Humori.hpp"
+#include "Gomory.hpp"
 
 namespace coursework
 {
 
-	void Humori(char *file_name, graph *&gr)
+	void Gomory(char *file_name, graph *&gr)
 	{
 		FILE *f;
 
@@ -17,6 +17,7 @@ namespace coursework
 			throw(e);
 		}
 
+		// Recreate graph
 		gr->type = 0;
 		if (gr->adj_m != NULL)
 		{
@@ -27,11 +28,11 @@ namespace coursework
 		// Give memory for result graph
 		graph *gr_result = create_graph(gr->n_vertexes, gr->n_vertexes - 1);
 
-		// Set that we have one vertex(gr)
+		// Set that we have one vertex (gr)
 		gr_result->n_vertexes = 1;
 		gr_result->n_edges = 0;
 
-		// Create array of graphs, each graph is a vertex of gr_result
+		// Create array of graphs. Each graph of array is a vertex of gr_result
 		graph **graphs = new graph*[gr->n_vertexes];
 
 		// Give memory for adjacent matrix
@@ -49,19 +50,30 @@ namespace coursework
 		// First graph and first vertex
 		graphs[0] = gr;
 
+		//
+		//
 		// Start recurs for gr_resultS
-		recurs_humori(gr_result, graphs, 0, &f);
+		recurs_Gomory(gr_result, graphs, 0, &f);
+		//
+		//
+		//
 
 		// Rebuild result graph
 		T_vertex tmp;
 		tmp.union_v = false;
 		for (int i = 0; i < gr_result->n_edges; i++)
 		{
+			// Find id of not union vertex in graph
 			tmp.v = find_not_union_ver(graphs[gr_result->edges[i].in]);
+			// Set instead of graph - not union vertex
 			gr_result->edges[i].in = g_id(tmp, gr_result);
 
+			// Find id of not union vertex in graph
 			tmp.v = find_not_union_ver(graphs[gr_result->edges[i].out]);
+			// Set instead of graph - not union vertex
 			gr_result->edges[i].out = g_id(tmp, gr_result);
+
+			// If error
 			if (gr_result->edges[i].in == -1 || gr_result->edges[i].out == -1)
 			{
 				T_exception e;
@@ -72,13 +84,15 @@ namespace coursework
 			}
 		}
 
+		// Init pass_abl by stream
 		for (int i = 0; i < gr_result->n_edges; i++)
 			gr_result->edges[i].pass_abl = gr_result->edges[i].stream;
 
 		// Output result graph in file
 		fprintf(f, "================================================\nResult graph:\n\n");
 		output(gr_result, &f);
-		graphviz("Humori_result.png", gr_result);
+		// And draw...
+		graphviz("Gomory_result.png", gr_result);
 
 		// Free memory from graphs
 		for (int i = 0; i < gr_result->n_vertexes; i++)
@@ -87,8 +101,13 @@ namespace coursework
 		}
 		delete[] * graphs;
 
+		//
 		// Build streams matrix
+		//
+
+		// Create dynamic array
 		gr_result->streams = create_array<int>(gr_result->n_vertexes, gr_result->n_vertexes);
+		// Init
 		for (int i = 0; i < gr_result->n_vertexes; i++)
 			for (int j = 0; j < gr_result->n_vertexes; j++)
 				if (i == j)
@@ -102,14 +121,15 @@ namespace coursework
 			gr_result->streams[gr_result->edges[i].out][gr_result->edges[i].in] = gr_result->edges[i].stream;
 		}
 
-		// Define matrix of streams
+		// Define matrix of streams by DFS
 		for (int i = 0; i < gr_result->n_vertexes; i++)
-			DFS_Humori(gr_result, i, -1, i, INF);
+			DFS_Gomory(gr_result, i, -1, i, INF);
 
 		// Ouput matrix of streams in file
 		fprintf(f, "\n\nMatrix of streams:\n");
 		output_streams(gr_result, &f);
 
+		// Now input graph is Gomory resulted graph
 		gr = gr_result;
 
 		// Close file
@@ -125,7 +145,6 @@ namespace coursework
 
 	int find_not_union_ver(graph *gr)
 	{
-
 		for (int i = 0; i < gr->n_vertexes; i++)
 			for (int i = 0; i < gr->n_vertexes; i++)
 				if (!gr->v_n[i].union_v)
@@ -134,33 +153,39 @@ namespace coursework
 		return -1;
 	}
 
-	void recurs_humori(graph *&gr_result, graph **&graphs, int ver, FILE **f_output)
+	void recurs_Gomory(graph *&gr_result, graph **&graphs, int ver, FILE **f_output)
 	{
+		//
 		// If end of recurs
+		//
+
 		if (if_end_recurs(graphs[ver]))
 			return;
-
-		fprintf(*f_output, "================================================\nCurrent graph (№%d):\n", gr_result->n_vertexes);
-		output(graphs[ver], f_output);
-		char *tmp = new char[40];
-		char *buf = new char[40];
-		itoa(gr_result->n_vertexes, buf, 10);
-		strcpy(tmp, "Graph#");
-		strcat(tmp, buf);
-		strcat(tmp, ".png");
-		graphviz(tmp, graphs[ver]);
 
 		//
 		// If not end of recurs
 		//
 
+		// Output current graph
+		fprintf(*f_output, "================================================\nCurrent graph (№%d):\n", gr_result->n_vertexes);
+		output(graphs[ver], f_output);
+
+		char *tmp = new char[40];
+		char *buf = new char[40];
+		//char *buffer = new char[20]; // Char buffer
+		//itoa(gr_result->n_vertexes, buf, 10);
+		sprintf(tmp, "Graph#%d.png", gr_result->n_vertexes);
+		graphviz(tmp, graphs[ver]);
+
 		//
 		//
 		//---------------------------------------------------------
-		// Ford for two not UNION_VERTEX
+		// Ford for two not union vertices
 
-		//Find two not UNION_VERTEX'es
+		// Find two not union vertices
 		int *vers = find_not_union_vers(graphs[ver]);
+
+		// Ford-Fulkerson algorithm
 		int max_stream;
 		try
 		{
@@ -172,7 +197,7 @@ namespace coursework
 			ex.code = e;
 			ex.text = "Алгоритм Форда-Фалкерсона перевищив максимальну кількість ітерацій.";
 			ex.solution = "Змініть граф, або вкажіть джерело та стік.";
-			Humori_free(gr_result, graphs);
+			Gomory_free(gr_result, graphs);
 			throw(ex);
 		}
 
@@ -182,19 +207,17 @@ namespace coursework
 				if (graphs[ver]->adj_m[i][j])
 					graphs[ver]->adj_m[j][i] = 1;
 
+		// Define minimum cut
 		int *vect;
 		vect = def_min_cut(graphs[ver], vers[0]);
 		delete[] vers;
 
-		// Output minimum cut vertexes
+		// Output minimum cut vertices
 		int i = 0;
-		fprintf(*f_output, "\nVertex in minimum cut of current graph:\n");
+		fprintf(*f_output, "\nVertices in minimum cut of current graph:\n");
 		while (vect[i] != -1)
 		{
-			if (!graphs[ver]->v_n[vect[i]].union_v)
-				fprintf(*f_output, "%d ", graphs[ver]->v_n[vect[i]].v);
-			else
-				fprintf(*f_output, "S%d ", graphs[ver]->v_n[vect[i]].v);
+			fprintf(*f_output, "%s ", g_n(graphs[ver]->v_n[vect[i]], buf));
 			i++;
 		}
 		fprintf(*f_output, "\n");
@@ -211,9 +234,7 @@ namespace coursework
 
 		fprintf(*f_output, "\nFirst condensed graph:\n");
 		output(graphs[gr_result->n_vertexes - 1], f_output);
-		strcpy(tmp, "Graph#");
-		strcat(tmp, buf);
-		strcat(tmp, "_first_half.png");
+		sprintf(tmp, "Graph#%d_first_half.png", gr_result->n_vertexes - 1);
 		graphviz(tmp, graphs[gr_result->n_vertexes - 1]);
 
 		// Condense second half of graph (hold vect)
@@ -222,16 +243,16 @@ namespace coursework
 
 		fprintf(*f_output, "\nSecond condensed graph:\n");
 		output(graphs[gr_result->n_vertexes - 1], f_output);
-		strcpy(tmp, "Graph#");
-		strcat(tmp, buf);
-		strcat(tmp, "_second_half.png");
+		sprintf(tmp, "Graph#%d_second_half.png", gr_result->n_vertexes - 2);
 		graphviz(tmp, graphs[gr_result->n_vertexes - 1]);
-
-
 		//---------------------------------------------------------
 		//
 		//
 
+		//
+		//
+		//---------------------------------------------------------
+		// Rebuild Gomory graph
 
 		// Free memory from old graph which is was given in function (Do not need it enough)
 		delete_graph(graphs[ver]);
@@ -253,9 +274,6 @@ namespace coursework
 			gr_result->n_vertexes--;
 		}
 
-		//
-		//
-		//---------------------------------------------------------
 		// Add new edge between graphs[ver] and second hapf graphs[last]
 		gr_result->edges[gr_result->n_edges].in = ver;
 		gr_result->edges[gr_result->n_edges].out = gr_result->n_vertexes - 1;
@@ -268,14 +286,13 @@ namespace coursework
 		// Change edges of result graph
 		cg_adj(gr_result, graphs, ver, vect);
 
-		strcpy(tmp, "Humori_Graph_");
-		strcat(tmp, buf);
-		strcat(tmp, ".png");
+		// Draw Gomory graph
+		sprintf(tmp, "Gomory_Graph_%d.png", gr_result->n_vertexes - 1);
 		graphviz(tmp, gr_result, true);
+
 		// Free memory
 		delete[] tmp;
 		delete[] buf;
-		// Delete minimum cut vector
 		delete[] vect;
 
 		fprintf(*f_output, "\n\n");
@@ -286,16 +303,17 @@ namespace coursework
 		//
 		//
 		//---------------------------------------------------------
-		// Start recurs_humori for second half
-		recurs_humori(gr_result, graphs, gr_result->n_vertexes - 1, f_output);
+		// Recurs
 
-		// Start recurs_humori for first half
-		recurs_humori(gr_result, graphs, ver, f_output);
+		// Start recurs_Gomory for second half
+		recurs_Gomory(gr_result, graphs, gr_result->n_vertexes - 1, f_output);
+
+		// Start recurs_Gomory for first half
+		recurs_Gomory(gr_result, graphs, ver, f_output);
+
 		//---------------------------------------------------------
 		//
 		//
-
-
 	}
 
 	bool if_end_recurs(graph *gr)
@@ -373,7 +391,8 @@ namespace coursework
 		graph *result = create_graph(gr->n_vertexes, gr->n_edges);
 		result->n_vertexes = 1;
 		result->n_edges = 0;
-		// Name of UNION_VERTEX
+
+		// Create union vertex
 		result->v_n[0].v = ver;
 		result->v_n[0].union_v = true;
 
@@ -505,7 +524,7 @@ namespace coursework
 				}
 			}
 
-		// Init stream by zero
+		// Init streams by zero
 		for (int i = 0; i < result->n_edges; i++)
 			result->edges[i].stream = 0;
 
@@ -518,10 +537,11 @@ namespace coursework
 		int* result = new int[gr->n_vertexes];
 		T_queue *wave_head = NULL;
 		T_queue *wave_tail = NULL;
-		// Array of visited vertexes
+
+		// Array of visited vertices
 		bool* visit = new bool[gr->n_vertexes];
 
-		// Init arrays
+		// Init
 		for (int i = 0; i < gr->n_vertexes; i++)
 		{
 			result[i] = -1;
@@ -534,13 +554,14 @@ namespace coursework
 		int edge_n,		// Current edge
 			c_v = in,	// Current vertex
 			j = 1;		// Count of vertexes in result - 1
-						// When cycle must end
-		bool cycle_end = 0;
 
 		// Fill result vector
 		while (wave_head != NULL)
 		{
+			// Get element from previous wave
 			c_v = get_e(wave_head, wave_tail);
+
+			// For each adjacent vertex...
 			for (int i = 0; i < gr->n_vertexes; i++)
 			{
 				edge_n = g_e(c_v, i, gr);
@@ -557,7 +578,9 @@ namespace coursework
 				}
 			}
 		}
+
 		delete[] visit;
+
 		return result;
 	}
 
@@ -575,7 +598,7 @@ namespace coursework
 		return false;
 	}
 
-	void DFS_Humori(graph *&gr, int start, int prev, int in, int min)
+	void DFS_Gomory(graph *&gr, int start, int prev, int in, int min)
 	{
 		for (int i = 0; i < gr->n_vertexes; i++)
 		{
@@ -585,19 +608,23 @@ namespace coursework
 				{
 					gr->streams[start][i] = min;
 					gr->streams[i][start] = min;
-					DFS_Humori(gr, start, in, i, min);
+
+					// Recurs
+					DFS_Gomory(gr, start, in, i, min);
 				}
 				else
 				{
 					gr->streams[start][i] = gr->streams[in][i];
 					gr->streams[i][start] = gr->streams[in][i];
-					DFS_Humori(gr, start, in, i, gr->streams[in][i]);
+
+					// Recurs
+					DFS_Gomory(gr, start, in, i, gr->streams[in][i]);
 				}
 			}
 		}
 	}
 
-	void Humori_free(graph *&gr_result, graph **&graphs)
+	void Gomory_free(graph *&gr_result, graph **&graphs)
 	{
 		for (int i = 0; i < gr_result->n_vertexes; i++)
 		{
