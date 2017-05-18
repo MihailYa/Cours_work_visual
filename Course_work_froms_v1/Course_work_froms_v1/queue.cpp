@@ -5,10 +5,12 @@ namespace coursework
 
 	void add_e(T_queue *&head, T_queue *&tail, int data)
 	{
+		// Create new element
 		T_queue *curr = new T_queue;
 		curr->data = data;
 		curr->next = NULL;
 
+		// Insert element in head
 		if (head == NULL)
 		{
 			head = curr;
@@ -16,6 +18,7 @@ namespace coursework
 			return;
 		}
 
+		// Insert element in tail
 		tail->next = curr;
 		tail = curr;
 		return;

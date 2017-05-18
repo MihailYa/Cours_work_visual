@@ -1,6 +1,6 @@
 #pragma once
 
-namespace Course_work_froms_v1 {
+namespace coursework {
 
 	using namespace System;
 	using namespace System::ComponentModel;

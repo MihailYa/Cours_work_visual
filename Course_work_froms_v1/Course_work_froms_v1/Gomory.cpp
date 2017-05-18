@@ -95,11 +95,7 @@ namespace coursework
 		graphviz("Gomory_result.png", gr_result);
 
 		// Free memory from graphs
-		for (int i = 0; i < gr_result->n_vertexes; i++)
-		{
-			delete_graph(graphs[i]);
-		}
-		delete[] * graphs;
+		Gomory_free(gr_result, graphs);
 
 		//
 		// Build streams matrix
@@ -632,9 +628,6 @@ namespace coursework
 		}
 		delete[] * graphs;
 		graphs = NULL;
-
-		delete_graph(gr_result);
-		gr_result = NULL;
 	}
 
 }

@@ -11,7 +11,7 @@ void Main(array<String^>^ args)
 	Application::EnableVisualStyles();
 	Application::SetCompatibleTextRenderingDefault(false);
 
-	Course_work_froms_v1::MyForm form;
+	coursework::MyForm form;
 
 	Application::Run(%form);
 }

@@ -106,6 +106,7 @@ namespace coursework
 		std::string res;
 		if (type)
 		{
+			// Create Gomory result graph
 			res = "graph G {\n";
 			for (int i = 0; i < gr->n_edges; i++)
 			{
@@ -197,14 +198,14 @@ namespace coursework
 	{
 		std::string inp;
 
+		// Create graph
 		inp = output_graphviz(gr, type);
 
 		GVC_t *gvc;
 		gvc = gvContext();
-
 		Agraph_t *g;
 		g = agmemread(inp.c_str());
-
+		
 		gvLayout(gvc, g, "dot");
 		gvRenderFilename(gvc, g, "png", file_name);
 		gvFreeLayout(gvc, g);

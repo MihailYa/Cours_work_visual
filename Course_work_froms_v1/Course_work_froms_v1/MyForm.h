@@ -1,12 +1,13 @@
 #pragma once
-#include <string>
-#include <msclr\marshal_cppstd.h>
-#include "MyForm_.h"
+
 #include "input.hpp"
+#include "stdafx.hpp"
 
-namespace Course_work_froms_v1 {
+#include "MyForm_.h"
 
-	using namespace coursework;
+
+namespace coursework {
+
 	using namespace System;
 	using namespace System::ComponentModel;
 	using namespace System::Collections;
@@ -67,8 +68,8 @@ namespace Course_work_froms_v1 {
 		/// <summary>
 		/// Required designer variable.
 		/// </summary>
-		bool first = true;
-		MyForm_ ^form_;
+		bool first = true;	// First click on richTextBox
+		MyForm_ ^form_;		// Window with algorithms
 
 #pragma region Windows Form Designer generated code
 		/// <summary>
@@ -453,6 +454,7 @@ namespace Course_work_froms_v1 {
 		
 			if (this->checkBox1->Checked || this->checkBox2->Checked)
 			{
+				// Define mode
 				if (this->checkBox1->Checked && this->checkBox2->Checked)
 				{
 					mode = 2;
@@ -517,6 +519,8 @@ namespace Course_work_froms_v1 {
 				e.text = "Не обрано алгоритм.";
 				throw(e);
 			}
+
+			// Read graph
 			graph *gr = NULL;
 			if (this->radioButton1->Checked)
 			{
@@ -528,7 +532,10 @@ namespace Course_work_froms_v1 {
 					throw(e);
 				}
 				temp = msclr::interop::marshal_as<std::string>(this->richTextBox1->Text);
+				// Read graph from richTextBox
 				input_char(temp.c_str(), gr);
+
+				// Save graph
 				if (this->checkBox3->Checked)
 				{
 					if (this->textBox2->Text == "")
@@ -557,12 +564,16 @@ namespace Course_work_froms_v1 {
 					}
 				}
 
+				// Create new window
 				form_ = gcnew MyForm_(mode, gr, vers, ss);
 			}
 			else
 			{
 				temp = msclr::interop::marshal_as<std::string>(this->textBox1->Text);
+				// Read graph from file
 				input(temp.c_str(), gr);
+
+				// Create new window
 				form_ = gcnew MyForm_(mode, gr, vers, ss);
 			}
 		}

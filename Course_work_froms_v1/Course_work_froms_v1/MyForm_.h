@@ -4,21 +4,20 @@
 #include "stdafx.hpp"
 #include "PictureForm.h"
 
+// Directory for output
 #define OUTPUT_DIR "output"
 
-static std::string ford_text;
-static std::string Gomory_text;
+static std::string ford_text;	// Result text of Ford-Fulkerson algorithm
+static std::string Gomory_text;	// Result text of Gomory-Hu algorithm
 
-namespace Course_work_froms_v1 {
+namespace coursework {
 
-	using namespace coursework;
 	using namespace System;
 	using namespace System::ComponentModel;
 	using namespace System::Collections;
 	using namespace System::Windows::Forms;
 	using namespace System::Data;
 	using namespace System::Drawing;
-	using namespace std;
 
 	/// <summary>
 	/// Summary for MyForm_
@@ -27,6 +26,7 @@ namespace Course_work_froms_v1 {
 	{
 	public:
 		/**
+		* Constructor
 		* @param mode 0 - Ford, 1 - Gomory, 2 - both
 		* @param gr pointer on graph
 		*/
@@ -50,15 +50,21 @@ namespace Course_work_froms_v1 {
 				case 0:
 				{
 					this->radioButton2->Enabled = false;
+
+					// Draw input graph
 					graphviz("Input.png", gr);
 					strcpy(pbox1, "Input.png");
 					pictureBox1->Image = Image::FromFile("Input.png");
+
 					int iters;
+
+					// Start Ford-Fulkerson algorithm
 					t = clock();
 					if (ss)
 						Ford("Ford.txt", gr, iters, vers[0] - 1, vers[1] - 1);
 					else
 						Ford("Ford.txt", gr, iters);
+
 					t = clock() - t;
 					time_ford = ((float)t)/CLOCKS_PER_SEC;
 
@@ -71,10 +77,12 @@ namespace Course_work_froms_v1 {
 						throw(e);
 					}
 
+					// Get size of file
 					fseek(f, 0, SEEK_END);
 					file_size = ftell(f);
 					rewind(f);
 
+					// Read
 					tmp = new char[file_size + 1];
 					fread(tmp, file_size, 1, f);
 
@@ -87,7 +95,11 @@ namespace Course_work_froms_v1 {
 					slides_ford = iters;
 					c_slide = 1;
 					chdir("../");
+
+					// Free memory
 					delete_graph(gr);
+
+					// Change slider
 					Change_Slide();
 
 					break;
@@ -102,8 +114,10 @@ namespace Course_work_froms_v1 {
 							gr->edges[i].orient = false;
 					}
 
+					// Draw graph
 					graphviz("Input.png", gr);
 
+					// Start Gomory-Hu algorithm
 					t = clock();
 					Gomory("Gomory_result.txt", gr);
 					t = clock() - t;
@@ -116,6 +130,8 @@ namespace Course_work_froms_v1 {
 						e.text = "Не можливо відкрити файл Gomory_result.txt";
 						throw(e);
 					}
+
+					// Get size of file
 					fseek(f, 0, SEEK_END);
 					file_size = ftell(f);
 					rewind(f);
@@ -136,6 +152,7 @@ namespace Course_work_froms_v1 {
 					Gomory_text = tmp;
 					delete[] tmp;
 
+					// Calculate number of slides
 					slides_Gomory = gr->n_vertexes - 1;
 					c_slide = 1;
 					half = -1;
@@ -146,16 +163,23 @@ namespace Course_work_froms_v1 {
 					this->radioButton2->Checked = true;
 					chdir("../");
 
+					// Free memory from graph
 					delete_graph(gr);
+
+					// Change slide
 					Change_Slide();
 
 					break;
 				}
 				case 2:
 				{
+					// Draw graph
 					graphviz("Input.png", gr);
 					int iters;
 
+					//
+					// Start Ford-Fulkerson algorithm
+					//
 					t = clock();
 					if (ss)
 						Ford("Ford.txt", gr, iters, vers[0] - 1, vers[1] - 1);
@@ -172,10 +196,12 @@ namespace Course_work_froms_v1 {
 						throw(e);
 					}
 
+					// Get size of file
 					fseek(f, 0, SEEK_END);
 					file_size = ftell(f);
 					rewind(f);
 
+					// Read file
 					tmp = new char[file_size + 1];
 					fread(tmp, file_size, 1, f);
 
@@ -191,12 +217,15 @@ namespace Course_work_froms_v1 {
 					ford_text = tmp;
 					delete[] tmp;
 
+					// Calculate number of slides
 					slides_ford = iters;
 					c_slide = 1;
 
 					//
-					// Gomory
+					// Gomory-Hu algorithm
 					//
+
+					// Rewind graph
 					for (int i = 0; i < gr->n_edges; i++)
 					{
 						gr->edges[i].stream = 0;
@@ -205,6 +234,7 @@ namespace Course_work_froms_v1 {
 
 					gr->type = false;
 
+					// Start Gomory-Hu algorithm
 					t = clock();
 					Gomory("Gomory_result.txt", gr);
 					t = clock() - t;
@@ -218,10 +248,12 @@ namespace Course_work_froms_v1 {
 						throw(e);
 					}
 
+					// Get size of file
 					fseek(f, 0, SEEK_END);
 					file_size = ftell(f);
 					rewind(f);
 
+					// Read file
 					tmp = new char[file_size + 1];
 					fread(tmp, file_size, 1, f);
 
@@ -237,6 +269,7 @@ namespace Course_work_froms_v1 {
 					Gomory_text = tmp;
 					delete[] tmp;
 
+					// Calculate number of slides
 					slides_Gomory = gr->n_vertexes - 1;
 
 					this->radioButton1->Checked = true;
@@ -246,7 +279,11 @@ namespace Course_work_froms_v1 {
 
 					this->richTextBox1->Text = gcnew String(ford_text.c_str());
 					chdir("../");
+
+					// Free memory
 					delete_graph(gr);
+
+					// Change slide
 					Change_Slide();
 					break;
 				}
@@ -266,16 +303,12 @@ namespace Course_work_froms_v1 {
 					MessageBox::Show(gcnew String(("Помилка: " + e.text + "\nМожливе рішення: " + e.solution).c_str()), "Error", MessageBoxButtons::OK, MessageBoxIcon::Error);
 				else
 					MessageBox::Show(gcnew String(("Помилка: " + e.text).c_str()), "Error", MessageBoxButtons::OK, MessageBoxIcon::Error);
-				if (e.code != 5 && e.code != 7)
-					delete_graph(gr);
+				delete_graph(gr);
 				this->~MyForm_();
 				chdir("../");
 				return;
 			}
 			this->Show();
-			//
-			//TODO: Add the constructor code here
-			//
 		}
 
 	protected:
@@ -298,7 +331,6 @@ namespace Course_work_froms_v1 {
 	private: System::Windows::Forms::Label^  label1;
 	private: System::Windows::Forms::PictureBox^  pictureBox1;
 	private: System::Windows::Forms::Label^  label2;
-
 	private: System::Windows::Forms::PictureBox^  pictureBox2;
 	private: System::Windows::Forms::RichTextBox^  richTextBox1;
 	private: System::Windows::Forms::Label^  label3;
@@ -310,14 +342,14 @@ namespace Course_work_froms_v1 {
 	private:
 		/// <summary>
 		/// </summary>
-		int slides_ford;
-		int slides_Gomory;
-		int c_slide;
-		int half;
-		char *pbox1;
-		char *pbox2;
-		double time_ford;
-		double time_Gomory;
+		int slides_ford;	// Number of slides of Ford-Fulkerson algorithm
+		int slides_Gomory;	// Number of slides of Gomory-Hu algorithm 
+		int c_slide;		// Current slide
+		int half;			// Condensed half (for Gomory-Hu slider)
+		char *pbox1;		// Description of picturebox1
+		char *pbox2;		// Description of picturebox2
+		double time_ford;	// Time of Ford-Fulkerson algorithm
+		double time_Gomory;	// Time of Gomory-Hu algorithm
 
 #pragma region Windows Form Designer generated code
 		/// <summary>
@@ -486,6 +518,7 @@ namespace Course_work_froms_v1 {
 
 		}
 #pragma endregion
+		// Delete directory function
 		private: bool Remove_Directory()
 		{
 			HANDLE hFind = INVALID_HANDLE_VALUE;
@@ -497,11 +530,11 @@ namespace Course_work_froms_v1 {
 
 			//_bstr_t b(f.cFileName);
 			//char file_name[40];
-			wstring ws;
+			std::wstring ws;
 			do
 			{
 				ws = f.cFileName;
-				string tmp(ws.begin(), ws.end());
+				std::string tmp(ws.begin(), ws.end());
 				tmp = OUTPUT_DIR "/" + tmp;
 				remove(tmp.c_str());
 				//DeleteFile(f.cFileName);
@@ -514,6 +547,8 @@ namespace Course_work_froms_v1 {
 
 			return true;
 		}
+
+		// Gomory-Hu
 		private: System::Void radioButton1_Click(System::Object^  sender, System::EventArgs^  e) {
 			half = -2;
 			c_slide = 1;
@@ -534,36 +569,31 @@ namespace Course_work_froms_v1 {
 			this->label4->Text = gcnew String(temp);
 			Change_Slide();
 		}
+
+		// Change slide function
 		private: void Change_Slide()
 		{
 			char temp[100];
-			char buf[4];
 			if (this->radioButton1->Checked)
 			{
-				itoa(c_slide, buf, 10);
-				strcpy(temp, OUTPUT_DIR "/Ford_Iteration_");
-				strcat(temp, buf);
-				strcat(temp, ".png");
+				// Ford slide
+				sprintf(temp, OUTPUT_DIR "/Ford_Iteration_%d.png", c_slide);
 				strcpy(pbox2, temp);
 				this->pictureBox2->Image = Image::FromFile(gcnew String(temp));
-				strcpy(temp, buf);
-				strcat(temp, " ітерація.");
+				sprintf(temp, "%d ітерація.", c_slide);
 				this->label3->Text = gcnew String(temp);
 				return;
 			}
 			else
 			{
-				itoa(c_slide, buf, 10);
-				strcpy(temp, OUTPUT_DIR "/Graph#");
-				strcat(temp, buf);
+				// Humori slide
+				sprintf(temp, OUTPUT_DIR "/Graph#%d", c_slide);
 				if (half == -1)
 				{
 					strcat(temp, ".png");
 					strcpy(pbox2, temp);
 					this->pictureBox2->Image = Image::FromFile(gcnew String(temp));
-					strcpy(temp, "Граф на ");
-					strcat(temp, buf);
-					strcat(temp, " ітерації.");
+					sprintf(temp, "Граф на %d ітерації.", c_slide);
 					this->label3->Text = gcnew String(temp);
 				}
 				else if (half == 0)
@@ -571,9 +601,7 @@ namespace Course_work_froms_v1 {
 					strcat(temp, "_first_half.png");
 					strcpy(pbox2, temp);
 					this->pictureBox2->Image = Image::FromFile(gcnew String(temp));
-					strcpy(temp, "Граф на ");
-					strcat(temp, buf);
-					strcat(temp, " ітерації. Перший сконденсований граф.");
+					sprintf(temp, "Граф на %d ітерації. Перший сконденсований граф.", c_slide);
 					this->label3->Text = gcnew String(temp);
 				}
 				else if(half == 1)
@@ -581,9 +609,7 @@ namespace Course_work_froms_v1 {
 					strcat(temp, "_second_half.png");
 					strcpy(pbox2, temp);
 					this->pictureBox2->Image = Image::FromFile(gcnew String(temp));
-					strcpy(temp, "Граф на ");
-					strcat(temp, buf);
-					strcat(temp, " ітерації. Другий сконденсований граф.");
+					sprintf(temp, "Граф на %d ітерації. Другий сконденсований граф.", c_slide);
 					this->label3->Text = gcnew String(temp);
 				}
 				else if (half == 2)
@@ -596,9 +622,7 @@ namespace Course_work_froms_v1 {
 				}
 				if (half != 2)
 				{
-					strcpy(temp, OUTPUT_DIR "/Gomory_Graph_");
-					strcat(temp, buf);
-					strcat(temp, ".png");
+					sprintf(temp, OUTPUT_DIR "/Gomory_Graph_%d.png", c_slide);
 					strcpy(pbox1, temp);
 					this->pictureBox1->Image = Image::FromFile(gcnew String(temp));
 					
@@ -607,6 +631,8 @@ namespace Course_work_froms_v1 {
 				}
 			}
 		}
+
+		// Next slide function
 		private: System::Void button2_Click(System::Object^  sender, System::EventArgs^  e) {
 			if (this->radioButton1->Checked)
 			{
@@ -644,6 +670,8 @@ namespace Course_work_froms_v1 {
 				Change_Slide();
 			}
 		}
+
+		// Previous slide function
 		private: System::Void button1_Click(System::Object^  sender, System::EventArgs^  e) {
 			if (this->radioButton1->Checked)
 			{
@@ -681,6 +709,8 @@ namespace Course_work_froms_v1 {
 				Change_Slide();
 			}
 		}
+
+		// Ford-Fulkerson
 		private: System::Void radioButton2_Click(System::Object^  sender, System::EventArgs^  e) {
 			half = -1;
 			c_slide = 1;
@@ -690,21 +720,19 @@ namespace Course_work_froms_v1 {
 			char buf[10];
 
 			sprintf(buf, "%f", time_Gomory);
-			strcpy(temp, "Час роботи алгоритму: ");
-			strcat(temp, buf);
-			strcat(temp, "\nКількість ітерацій: ");
-			itoa(slides_Gomory, buf, 10);
-			strcat(temp, buf);
+			sprintf(temp, "Час роботи алгоритму: %f\nКількість ітерацій: %d", time_Gomory, slides_Gomory);
 			this->label4->Text = gcnew String(temp);
 			Change_Slide();
 			
 		}
+
+		// Show maximized image
 		private: System::Void pictureBox2_Click(System::Object^  sender, System::EventArgs^  e) {
-			Course_work_froms_v1::PictureForm^ Pictform = gcnew PictureForm(pbox2);
+			coursework::PictureForm^ Pictform = gcnew PictureForm(pbox2);
 			Pictform->Show();
 		}
 		private: System::Void pictureBox1_Click(System::Object^  sender, System::EventArgs^  e) {
-			Course_work_froms_v1::PictureForm^ Pictform = gcnew PictureForm(pbox1);
+			coursework::PictureForm^ Pictform = gcnew PictureForm(pbox1);
 			Pictform->Show();
 		}
 };

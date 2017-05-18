@@ -5,10 +5,12 @@ namespace coursework
 
 	void add_e(T_stack *&head, T_stack_dat data)
 	{
+		// Create new element
 		T_stack *curr = new T_stack;
 		curr->data = data;
 		curr->prev = NULL;
 
+		// Insert element in head
 		if (head == NULL)
 		{
 			head = curr;
