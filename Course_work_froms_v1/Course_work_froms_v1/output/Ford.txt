@@ -1,0 +1,10 @@
+--------------Ford_Fulkerson_Begin--------------
+
+ Current stream of web = 0.
+Source vertex: 1.
+Sink vertex: 2.
+
+
+New way can't be found.
+ Maximum stream = 0.
+---------------Ford_Fulkerson_End---------------

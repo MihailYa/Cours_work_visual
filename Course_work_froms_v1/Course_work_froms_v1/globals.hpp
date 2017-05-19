@@ -17,6 +17,7 @@ namespace coursework
 	* 6 - Something wrong with mode parametr of Form_ class
 	* 7 - Problem with queue
 	* 8 - Problem with stack
+	* 9 - Problem with deleting directory
 	*/
 	struct T_exception
 	{

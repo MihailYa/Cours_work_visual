@@ -25,14 +25,6 @@ namespace coursework
 	/**
 	* Output graph for graphviz
 	* @param gr pointer on graph
-	* @param f pointer on file
-	* @param type if graph is gr_result
-	*/
-	void output_graphviz(graph *gr, FILE **f, bool type = false);
-
-	/**
-	* Output graph for graphviz
-	* @param gr pointer on graph
 	* @param type if graph is gr_result
 	*/
 	std::string output_graphviz(graph *gr, bool type = false);

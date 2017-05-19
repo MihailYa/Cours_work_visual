@@ -35,16 +35,23 @@ namespace coursework {
 			InitializeComponent();
 			pbox1 = new char[40];
 			pbox2 = new char[40];
-			
-			Remove_Directory();
-			CreateDirectory(L"" OUTPUT_DIR, NULL);
-			chdir(OUTPUT_DIR);
-			FILE *f;
-			long int file_size;
-			char *tmp;
-			clock_t t;
+
 			try
 			{
+				Remove_Directory();
+				if (!CreateDirectory(L"" OUTPUT_DIR, NULL))
+				{
+					T_exception e;
+					e.text = "Не можливо створити директорію " OUTPUT_DIR;
+					e.code = 9;
+					throw(e);
+				}
+				chdir(OUTPUT_DIR);
+				FILE *f;
+				long int file_size;
+				char *tmp;
+				clock_t t;
+			
 				switch (mode)
 				{
 				case 0:
@@ -53,8 +60,6 @@ namespace coursework {
 
 					// Draw input graph
 					graphviz("Input.png", gr);
-					strcpy(pbox1, "Input.png");
-					pictureBox1->Image = Image::FromFile("Input.png");
 
 					int iters;
 
@@ -100,6 +105,8 @@ namespace coursework {
 					delete_graph(gr);
 
 					// Change slider
+					strcpy(pbox1, OUTPUT_DIR "/Input.png");
+					this->pictureBox1->Image = Image::FromFile(OUTPUT_DIR "/Input.png");
 					Change_Slide();
 
 					break;
@@ -305,7 +312,8 @@ namespace coursework {
 					MessageBox::Show(gcnew String(("Помилка: " + e.text).c_str()), "Error", MessageBoxButtons::OK, MessageBoxIcon::Error);
 				delete_graph(gr);
 				this->~MyForm_();
-				chdir("../");
+				if (e.code != 9)
+					chdir("../");
 				return;
 			}
 			this->Show();
@@ -321,6 +329,18 @@ namespace coursework {
 			{
 				delete components;
 			}
+
+			if (this->pictureBox2->Image)
+			{
+				delete this->pictureBox2->Image;
+				this->pictureBox2->Image = nullptr;
+			}
+			if (this->pictureBox1->Image)
+			{
+				delete this->pictureBox1->Image;
+				this->pictureBox1->Image = nullptr;
+			}
+
 			delete[] pbox1;
 			delete[] pbox2;
 		}
@@ -346,8 +366,8 @@ namespace coursework {
 		int slides_Gomory;	// Number of slides of Gomory-Hu algorithm 
 		int c_slide;		// Current slide
 		int half;			// Condensed half (for Gomory-Hu slider)
-		char *pbox1;		// Description of picturebox1
-		char *pbox2;		// Description of picturebox2
+		char *pbox1;		// Way to image of picturebox1
+		char *pbox2;		// Way to image of picturebox2
 		double time_ford;	// Time of Ford-Fulkerson algorithm
 		double time_Gomory;	// Time of Gomory-Hu algorithm
 
@@ -522,24 +542,28 @@ namespace coursework {
 		private: bool Remove_Directory()
 		{
 			HANDLE hFind = INVALID_HANDLE_VALUE;
-			WIN32_FIND_DATA f;
+			WIN32_FIND_DATAW f;
 			
-			hFind = FindFirstFile(OUTPUT_DIR L"/*", &f);
+			hFind = FindFirstFileW(OUTPUT_DIR L"/*.*", &f);
 			if (hFind == INVALID_HANDLE_VALUE)
 				return false;
 
-			//_bstr_t b(f.cFileName);
-			//char file_name[40];
+			FILE *file_;
+
 			std::wstring ws;
 			do
 			{
 				ws = f.cFileName;
-				std::string tmp(ws.begin(), ws.end());
-				tmp = OUTPUT_DIR "/" + tmp;
-				remove(tmp.c_str());
-				//DeleteFile(f.cFileName);
+				if (!DeleteFileW((std::wstring(L"" OUTPUT_DIR "/") + f.cFileName).c_str()) && _wcsicmp(f.cFileName, L".") && _wcsicmp(f.cFileName, L".."))
+				{
+					T_exception e;
+					e.code = 9;
+					e.text = "Не можливо видалити файл з дерикторії " OUTPUT_DIR;
+					throw(e);
+				}
+				
 			}
-			while ((FindNextFile(hFind, &f))!=0);
+			while ((FindNextFileW(hFind, &f))!=0);
 
 			FindClose(hFind);
 
@@ -550,16 +574,20 @@ namespace coursework {
 
 		// Gomory-Hu
 		private: System::Void radioButton1_Click(System::Object^  sender, System::EventArgs^  e) {
-			half = -2;
-			c_slide = 1;
+			
 			strcpy(pbox1, OUTPUT_DIR "/Input.png");
+			if (this->pictureBox1->Image)
+			{
+				delete this->pictureBox1->Image;
+				this->pictureBox1->Image = nullptr;
+			}
 			this->pictureBox1->Image = Image::FromFile(OUTPUT_DIR "/Input.png");
 			this->label2->Text = L"Введенний граф:";
 			this->richTextBox1->Text = gcnew String(ford_text.c_str());
 
 			char temp[100];
 			char buf[10];
-
+			
 			sprintf(buf, "%f", time_ford);
 			strcpy(temp, "Час роботи алгоритму: ");
 			strcat(temp, buf);
@@ -567,6 +595,20 @@ namespace coursework {
 			itoa(slides_ford, buf, 10);
 			strcat(temp, buf);
 			this->label4->Text = gcnew String(temp);
+
+			if (slides_ford == 0)
+			{
+				this->label3->Text = L"";
+				if (this->pictureBox2->Image)
+				{
+					delete this->pictureBox2->Image;
+					this->pictureBox2->Image = nullptr;
+				}
+				return;
+			}
+
+			half = -2;
+			c_slide = 1;
 			Change_Slide();
 		}
 
@@ -574,61 +616,105 @@ namespace coursework {
 		private: void Change_Slide()
 		{
 			char temp[100];
-			if (this->radioButton1->Checked)
+			try
 			{
-				// Ford slide
-				sprintf(temp, OUTPUT_DIR "/Ford_Iteration_%d.png", c_slide);
-				strcpy(pbox2, temp);
-				this->pictureBox2->Image = Image::FromFile(gcnew String(temp));
-				sprintf(temp, "%d ітерація.", c_slide);
-				this->label3->Text = gcnew String(temp);
-				return;
+				if (this->radioButton1->Checked)
+				{
+					if (slides_ford == 0)
+						return;
+					// Ford slide
+					sprintf(temp, OUTPUT_DIR "/Ford_Iteration_%d.png", c_slide);
+					strcpy(pbox2, temp);
+					if (this->pictureBox2->Image)
+					{
+						delete this->pictureBox2->Image;
+						this->pictureBox2->Image = nullptr;
+					}
+					this->pictureBox2->Image = Image::FromFile(gcnew String(temp));
+					sprintf(temp, "%d ітерація.", c_slide);
+					this->label3->Text = gcnew String(temp);
+					return;
+				}
+				else
+				{
+					if (slides_Gomory == 0)
+						return;
+					// Humori slide
+					sprintf(temp, OUTPUT_DIR "/Graph#%d", c_slide);
+					if (half == -1)
+					{
+						strcat(temp, ".png");
+						strcpy(pbox2, temp);
+						if (this->pictureBox2->Image)
+						{
+							delete this->pictureBox2->Image;
+							this->pictureBox2->Image = nullptr;
+						}
+						this->pictureBox2->Image = Image::FromFile(gcnew String(temp));
+						sprintf(temp, "Граф на %d ітерації.", c_slide);
+						this->label3->Text = gcnew String(temp);
+					}
+					else if (half == 0)
+					{
+						strcat(temp, "_first_half.png");
+						strcpy(pbox2, temp);
+						if (this->pictureBox2->Image)
+						{
+							delete this->pictureBox2->Image;
+							this->pictureBox2->Image = nullptr;
+						}
+						this->pictureBox2->Image = Image::FromFile(gcnew String(temp));
+						sprintf(temp, "Граф на %d ітерації. Перший сконденсований граф.", c_slide);
+						this->label3->Text = gcnew String(temp);
+					}
+					else if (half == 1)
+					{
+						strcat(temp, "_second_half.png");
+						strcpy(pbox2, temp);
+						if (this->pictureBox2->Image)
+						{
+							delete this->pictureBox2->Image;
+							this->pictureBox2->Image = nullptr;
+						}
+						this->pictureBox2->Image = Image::FromFile(gcnew String(temp));
+						sprintf(temp, "Граф на %d ітерації. Другий сконденсований граф.", c_slide);
+						this->label3->Text = gcnew String(temp);
+					}
+					else if (half == 2)
+					{
+						strcpy(temp, OUTPUT_DIR "/Gomory_result.png");
+						strcpy(pbox2, temp);
+						if (this->pictureBox2->Image)
+						{
+							delete this->pictureBox2->Image;
+							this->pictureBox2->Image = nullptr;
+						}
+						this->pictureBox2->Image = Image::FromFile(gcnew String(temp));
+						strcpy(temp, "Кінцевий граф.");
+						this->label3->Text = gcnew String(temp);
+					}
+					if (half != 2)
+					{
+						sprintf(temp, OUTPUT_DIR "/Gomory_Graph_%d.png", c_slide);
+						strcpy(pbox1, temp);
+						if (this->pictureBox1->Image)
+						{
+							delete this->pictureBox1->Image;
+							this->pictureBox1->Image = nullptr;
+						}
+						this->pictureBox1->Image = Image::FromFile(gcnew String(temp));
+
+						strcpy(temp, "Поточний вигляд результуючого графу:");
+						this->label2->Text = gcnew String(temp);
+					}
+				}
 			}
-			else
+			catch (System::IO::FileNotFoundException^ e)
 			{
-				// Humori slide
-				sprintf(temp, OUTPUT_DIR "/Graph#%d", c_slide);
-				if (half == -1)
-				{
-					strcat(temp, ".png");
-					strcpy(pbox2, temp);
-					this->pictureBox2->Image = Image::FromFile(gcnew String(temp));
-					sprintf(temp, "Граф на %d ітерації.", c_slide);
-					this->label3->Text = gcnew String(temp);
-				}
-				else if (half == 0)
-				{
-					strcat(temp, "_first_half.png");
-					strcpy(pbox2, temp);
-					this->pictureBox2->Image = Image::FromFile(gcnew String(temp));
-					sprintf(temp, "Граф на %d ітерації. Перший сконденсований граф.", c_slide);
-					this->label3->Text = gcnew String(temp);
-				}
-				else if(half == 1)
-				{
-					strcat(temp, "_second_half.png");
-					strcpy(pbox2, temp);
-					this->pictureBox2->Image = Image::FromFile(gcnew String(temp));
-					sprintf(temp, "Граф на %d ітерації. Другий сконденсований граф.", c_slide);
-					this->label3->Text = gcnew String(temp);
-				}
-				else if (half == 2)
-				{
-					strcpy(temp, OUTPUT_DIR "/Gomory_result.png");
-					strcpy(pbox2, temp);
-					this->pictureBox2->Image = Image::FromFile(gcnew String(temp));
-					strcpy(temp, "Кінцевий граф.");
-					this->label3->Text = gcnew String(temp);
-				}
-				if (half != 2)
-				{
-					sprintf(temp, OUTPUT_DIR "/Gomory_Graph_%d.png", c_slide);
-					strcpy(pbox1, temp);
-					this->pictureBox1->Image = Image::FromFile(gcnew String(temp));
-					
-					strcpy(temp, "Поточний вигляд результуючого графу:");
-					this->label2->Text = gcnew String(temp);
-				}
+				MessageBox::Show(gcnew String("Помилка: не можливо відкрити зображення.\nМожливе рішення: перезапустіть программу."), "Error", MessageBoxButtons::OK, MessageBoxIcon::Error);
+				this->~MyForm_();
+				chdir("../");
+				return;
 			}
 		}
 
@@ -636,6 +722,9 @@ namespace coursework {
 		private: System::Void button2_Click(System::Object^  sender, System::EventArgs^  e) {
 			if (this->radioButton1->Checked)
 			{
+				if (slides_ford == 0)
+					return;
+
 				c_slide++;
 				if (c_slide > slides_ford)
 					c_slide = 1;
@@ -644,6 +733,9 @@ namespace coursework {
 			}
 			else
 			{
+				if (slides_Gomory == 0)
+					return;
+
 				if (half == 2)
 				{
 					half = -1;
@@ -712,6 +804,11 @@ namespace coursework {
 
 		// Ford-Fulkerson
 		private: System::Void radioButton2_Click(System::Object^  sender, System::EventArgs^  e) {
+			if (slides_Gomory == 0)
+			{
+				this->label3->Text = L"";
+				return;
+			}
 			half = -1;
 			c_slide = 1;
 			this->richTextBox1->Text = gcnew String(Gomory_text.c_str());

@@ -68,7 +68,7 @@ namespace coursework
 	* @param half 0 - first, 1 - second half
 	* @param f_output file for output
 	* @param vect vertexes of minimum cut in graph
-	* @param ver vertex of UNION_VERTEX
+	* @param ver vertex of "union vertex"
 	* @return condense graph
 	*/
 	graph* condense(graph *&gr, bool half, int *vect, int ver);

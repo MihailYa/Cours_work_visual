@@ -33,6 +33,12 @@ namespace coursework {
 			if (components)
 			{
 				delete components;
+
+				if (this->pictureBox1->Image)
+				{
+					delete this->pictureBox1->Image;
+					this->pictureBox1->Image = nullptr;
+				}
 			}
 		}
 	private: System::Windows::Forms::PictureBox^  pictureBox1;

@@ -23,9 +23,9 @@ namespace coursework
 
 	/**
 	* Ford's algorithm (output in opened file)
-	* @param f pointer on file
+	* @param f pointer on file			
 	* @param gr pointer on graph
-	* @param in number of Source vertex
+	* @param in number of Source vertex		
 	* @param out number of Sink vertex
 	* @return maximum stream
 	*/

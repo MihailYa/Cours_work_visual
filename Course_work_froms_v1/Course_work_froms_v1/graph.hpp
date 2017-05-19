@@ -77,8 +77,8 @@ namespace coursework
 
 	/**
 	* Get number of edge
-	* @param out begin of edge
-	* @param in end of edge
+	* @param out end of edge
+	* @param in begin of edge
 	* @param gr graph
 	* @param or oriented graph (default = 0)
 	* @return number of edge
@@ -97,6 +97,7 @@ namespace coursework
 	* Get name of vertex
 	* @param ver data of vertex
 	* @param buf char buffer
+	* @return view of vertex for output
 	*/
 	char* g_n(T_vertex ver, char *buf);
 

@@ -88,9 +88,9 @@ namespace coursework
 		// Define
 		for (int i = 0; i < gr->n_edges; i++)
 		{
-			sum_matrix[gr->edges[i].out][gr->edges[i].in] = 1;
+			sum_matrix[gr->edges[i].in][gr->edges[i].out] = 1;
 			if (!gr->type)
-				sum_matrix[gr->edges[i].in][gr->edges[i].out] = 1;
+				sum_matrix[gr->edges[i].out][gr->edges[i].in] = 1;
 		}
 
 		return sum_matrix;

@@ -38,6 +38,14 @@ namespace coursework
 
 		if (in == -1 || out == -1)
 		{
+			if (fclose(f))
+			{
+				T_exception e;
+				e.code = 1;
+				e.text = "Не можливо закрити файл ";
+				e.text += file_name;
+				throw(e);
+			}
 			T_exception e;
 			e.code = 3;
 			e.text = "Не можливо знайти стік або джерело мережі.";
@@ -46,6 +54,14 @@ namespace coursework
 		}
 		else if (in >= gr->n_vertexes || out >= gr->n_vertexes)
 		{
+			if (fclose(f))
+			{
+				T_exception e;
+				e.code = 1;
+				e.text = "Не можливо закрити файл ";
+				e.text += file_name;
+				throw(e);
+			}
 			T_exception e;
 			e.code = 3;
 			e.text = "Не правильно вказано джерело або стік мережі.";
@@ -54,7 +70,8 @@ namespace coursework
 
 		// Define current stream
 		c_stream = def_stream(gr, out);
-		fprintf(f, "\n Current stream of web = %d.\nSource vertex: %s.\nSink vertex: %s\n\n", c_stream, g_n(gr->v_n[in], buf), g_n(gr->v_n[out], buf));
+		fprintf(f, "\n Current stream of web = %d.\nSource vertex: %s.\nSink vertex: ", c_stream, g_n(gr->v_n[in], buf));
+		fprintf(f, "%s.\n\n", g_n(gr->v_n[out], buf));
 
 		// Create stack
 		T_stack *head = NULL;
@@ -75,6 +92,15 @@ namespace coursework
 			// If too many iterations
 			if (iter > MAX_ITER)
 			{
+				if (fclose(f))
+				{
+					T_exception e;
+					e.code = 1;
+					e.text = "Не можливо закрити файл ";
+					e.text += file_name;
+					throw(e);
+				}
+
 				T_exception e;
 				e.code = 2;
 				e.text = "Алгоритм Форда-Фалкерсона перевищив максимальну кількість ітерацій.";
@@ -151,16 +177,14 @@ namespace coursework
 
 		if (in == -1 || out == -1)
 		{
-			T_exception e;
-			e.code = 3;
-			e.text = "Не можливо знайти стік або джерело мережі.";
-			e.solution = "Змініть граф, або вкажіть джерело та стік.";
+			int e = 3;
 			throw(e);
 		}
 
 		// Define current stream of web
 		c_stream = def_stream(gr, out);
-		fprintf(*f, "\n Current stream of web = %d.\nSource vertex: %s.\nSink vertex: %s.\n\n", c_stream, g_n(gr->v_n[in], buf), g_n(gr->v_n[out], buf));
+		fprintf(*f, "\n Current stream of web = %d.\nSource vertex: %s.\nSink vertex: ", c_stream, g_n(gr->v_n[in], buf));
+		fprintf(*f, "%s.\n\n", g_n(gr->v_n[out], buf));
 
 		// Create stack
 		T_stack *head = NULL;
@@ -254,7 +278,7 @@ namespace coursework
 					visit[i] = false;
 				}
 			}
-			else if (!visit[i] && (gr->adj_m[i][c_v] && gr->edges[edge_n].pass_abl != 0))
+			else if (!visit[i] && (gr->adj_m[i][c_v] && gr->edges[edge_n].stream != 0))
 			{
 				// Add vertex to stack
 				dat.v = i;

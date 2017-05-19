@@ -40,65 +40,14 @@ namespace coursework
 				}
 				else if (j != 0)
 				{
-					fprintf(*f, "%4d", gr->streams[i - 1][j - 1]);
+					if(gr->streams[i - 1][j - 1]!=INF)
+						fprintf(*f, "%4d", gr->streams[i - 1][j - 1]);
+					else
+						fprintf(*f, "%4s", "INF");
 				}
 			}
 			fprintf(*f, "\n");
 		}
-	}
-
-	void output_graphviz(graph *gr, FILE **f, bool type)
-	{
-		if (type)
-		{
-			fprintf(*f, "graph G {\n");
-			for (int i = 0; i < gr->n_edges; i++)
-			{
-				fprintf(*f, "T%d -- ", gr->v_n[gr->edges[i].in].v);
-				fprintf(*f, "T%d", gr->v_n[gr->edges[i].out].v);
-				fprintf(*f, " [label=\" %d/%d \"];\n", gr->edges[i].stream, gr->edges[i].stream);
-
-			}
-		}
-		else if (gr->type)
-		{
-			fprintf(*f, "digraph G {\n");
-			for (int i = 0; i < gr->n_edges; i++)
-			{
-				if (gr->v_n[gr->edges[i].in].union_v)
-					fprintf(*f, "S%d -> ", gr->v_n[gr->edges[i].in].v);
-				else
-					fprintf(*f, "%d -> ", gr->v_n[gr->edges[i].in].v);
-
-				if (gr->v_n[gr->edges[i].out].union_v)
-					fprintf(*f, "S%d", gr->v_n[gr->edges[i].out].v);
-				else
-					fprintf(*f, "%d", gr->v_n[gr->edges[i].out].v);
-
-				fprintf(*f, " [label=\" %d/%d \"];\n", gr->edges[i].stream, gr->edges[i].pass_abl);
-			}
-		}
-		else
-		{
-			fprintf(*f, "graph G {\n");
-			for (int i = 0; i < gr->n_edges; i++)
-			{
-				if (gr->v_n[gr->edges[i].in].union_v)
-					fprintf(*f, "S%d -- ", gr->v_n[gr->edges[i].in].v);
-				else
-					fprintf(*f, "%d -- ", gr->v_n[gr->edges[i].in].v);
-
-				if (gr->v_n[gr->edges[i].out].union_v)
-					fprintf(*f, "S%d", gr->v_n[gr->edges[i].out].v);
-				else
-					fprintf(*f, "%d", gr->v_n[gr->edges[i].out].v);
-				fprintf(*f, " [label=\" %d/%d \"];\n", gr->edges[i].stream, gr->edges[i].pass_abl);
-
-			}
-		}
-		/*for (int i = 0; i < gr->n_vertexes; i++)
-		fprintf(*f, "%d;\n", gr->v_n[i]);*/
-		fprintf(*f, "}");
 	}
 
 	string output_graphviz(graph *gr, bool type)

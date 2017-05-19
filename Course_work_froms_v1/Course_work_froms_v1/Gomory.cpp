@@ -53,7 +53,42 @@ namespace coursework
 		//
 		//
 		// Start recurs for gr_resultS
-		recurs_Gomory(gr_result, graphs, 0, &f);
+		try
+		{
+			recurs_Gomory(gr_result, graphs, 0, &f);
+		}
+		catch (int &e)
+		{
+			Gomory_free(gr_result, graphs);
+
+			T_exception ex;
+			if (fclose(f))
+			{
+				
+				ex.code = 1;
+				ex.text = "Не можливо закрити файл ";
+				ex.text += file_name;
+				throw(ex);
+			}
+
+			ex.code = e;
+			if (e == 5)
+			{
+				ex.text = "Алгоритм Форда-Фалкерсона перевищив максимальну кількість ітерацій.";
+				ex.solution = "Змініть граф, або вкажіть джерело та стік.";
+			}
+			else if (e == 3)
+			{
+				ex.text = "Не можливо знайти стік або джерело мережі.";
+				ex.solution = "Змініть граф, або вкажіть джерело та стік.";
+			}
+			else
+			{
+				ex.text = "Невідома помилка.";
+			}
+
+			throw(ex);
+		}
 		//
 		//
 		//
@@ -83,6 +118,9 @@ namespace coursework
 				throw(e);
 			}
 		}
+		// Recreare adjacent matrix
+		delete_array(gr_result->adj_m, gr_result->n_vertexes);
+		gr_result->adj_m = adj(gr_result);
 
 		// Init pass_abl by stream
 		for (int i = 0; i < gr_result->n_edges; i++)
@@ -119,7 +157,9 @@ namespace coursework
 
 		// Define matrix of streams by DFS
 		for (int i = 0; i < gr_result->n_vertexes; i++)
+		{
 			DFS_Gomory(gr_result, i, -1, i, INF);
+		}
 
 		// Ouput matrix of streams in file
 		fprintf(f, "\n\nMatrix of streams:\n");
@@ -183,19 +223,8 @@ namespace coursework
 
 		// Ford-Fulkerson algorithm
 		int max_stream;
-		try
-		{
-			max_stream = Ford(f_output, graphs[ver], vers[0], vers[1]);
-		}
-		catch (int &e)
-		{
-			T_exception ex;
-			ex.code = e;
-			ex.text = "Алгоритм Форда-Фалкерсона перевищив максимальну кількість ітерацій.";
-			ex.solution = "Змініть граф, або вкажіть джерело та стік.";
-			Gomory_free(gr_result, graphs);
-			throw(ex);
-		}
+		max_stream = Ford(f_output, graphs[ver], vers[0], vers[1]);
+		
 
 		// Recreate adjacent matrix
 		for (int i = 0; i < graphs[ver]->n_vertexes; i++)
