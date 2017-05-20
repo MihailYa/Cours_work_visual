@@ -5,10 +5,10 @@ namespace coursework
 
 	int Ford(const char *file_name, graph *&gr, int &iterations, int in, int out)
 	{
-		FILE *f;
+		FILE *f = nullptr;
 
 		// Open file
-		if ((f = fopen(file_name, "wt")) == NULL)
+		if ((f = fopen(file_name, "wt")) == nullptr)
 		{
 			T_exception e;
 			e.code = 1;
@@ -27,7 +27,7 @@ namespace coursework
 
 		fprintf(f, "--------------Ford_Fulkerson_Begin--------------\n");
 
-		if (gr->adj_m == NULL)
+		if (gr->adj_m == nullptr)
 			gr->adj_m = adj(gr);
 
 		// Define Source and Sink
@@ -38,6 +38,7 @@ namespace coursework
 
 		if (in == -1 || out == -1)
 		{
+			delete[] visited;
 			if (fclose(f))
 			{
 				T_exception e;
@@ -54,6 +55,7 @@ namespace coursework
 		}
 		else if (in >= gr->n_vertexes || out >= gr->n_vertexes)
 		{
+			delete[] visited;
 			if (fclose(f))
 			{
 				T_exception e;
@@ -74,7 +76,7 @@ namespace coursework
 		fprintf(f, "%s.\n\n", g_n(gr->v_n[out], buf));
 
 		// Create stack
-		T_stack *head = NULL;
+		T_stack *head = nullptr;
 		T_stack_dat dat;
 
 		// Init
@@ -92,6 +94,9 @@ namespace coursework
 			// If too many iterations
 			if (iter > MAX_ITER)
 			{
+				delete[] visited;
+				get_e(head);
+
 				if (fclose(f))
 				{
 					T_exception e;
@@ -138,6 +143,9 @@ namespace coursework
 			graphviz(name_of_file, gr);
 		}
 
+		// Free memory from stack
+		get_e(head);
+
 		fprintf(f, "\nNew way can't be found.\n Maximum stream = %d.", c_stream);
 		delete[] visited;
 
@@ -166,7 +174,7 @@ namespace coursework
 
 		fprintf(*f, "\n--------------Ford Fulkerson Begin--------------\n");
 
-		if (gr->adj_m == NULL)
+		if (gr->adj_m == nullptr)
 			gr->adj_m = adj(gr);
 
 		// Define Source and Sink
@@ -177,6 +185,7 @@ namespace coursework
 
 		if (in == -1 || out == -1)
 		{
+			delete[] visited;
 			int e = 3;
 			throw(e);
 		}
@@ -187,7 +196,7 @@ namespace coursework
 		fprintf(*f, "%s.\n\n", g_n(gr->v_n[out], buf));
 
 		// Create stack
-		T_stack *head = NULL;
+		T_stack *head = nullptr;
 		T_stack_dat dat;
 
 		// Init
@@ -204,6 +213,10 @@ namespace coursework
 		{
 			if (iter > MAX_ITER)
 			{
+				// Free memory
+				get_e(head);
+				delete[] visited;
+
 				int e = 5;
 				throw(e);
 			}
@@ -228,6 +241,9 @@ namespace coursework
 			iter++;
 			cg_value = INF;
 		}
+
+		// Free memory from stack
+		get_e(head);
 
 		fprintf(*f, "\nNew way can't be found.\n Maximum stream = %d.", c_stream);
 		delete[] visited;
@@ -342,7 +358,7 @@ namespace coursework
 		char buf[10];					// Char buffer
 
 		fprintf(*f, "\nFound way:\n");
-		while (head != NULL)
+		while (head != nullptr)
 		{
 			out = in;
 

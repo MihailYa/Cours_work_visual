@@ -24,7 +24,7 @@ namespace coursework
 
 	void output_streams(graph *gr, FILE **f)
 	{
-		fprintf(*f, "%3s", "");
+		fprintf(*f, "   ");
 		for (int i = 0; i <= gr->n_vertexes; i++)
 		{
 			if (i != 0)

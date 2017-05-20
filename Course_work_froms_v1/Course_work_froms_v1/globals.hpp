@@ -18,6 +18,7 @@ namespace coursework
 	* 7 - Problem with queue
 	* 8 - Problem with stack
 	* 9 - Problem with deleting directory
+	* 10 - Problem with free memory
 	*/
 	struct T_exception
 	{

@@ -13,8 +13,8 @@ namespace coursework
 		result->n_edges = n_edges;
 		result->type = or ;
 
-		result->adj_m = NULL;
-		result->streams = NULL;
+		result->adj_m = nullptr;
+		result->streams = nullptr;
 
 		// Init
 		for (int i = 0; i < n_vertexes; i++)
@@ -36,13 +36,13 @@ namespace coursework
 		// Delete dynamic values
 		delete[] gr->edges;
 		delete[] gr->v_n;
-		if (gr->adj_m != NULL)
+		if (gr->adj_m != nullptr)
 			delete_array(gr->adj_m, gr->n_vertexes);
-		if (gr->streams != NULL)
+		if (gr->streams != nullptr)
 			delete_array(gr->streams, gr->n_vertexes);
 
-		delete[] gr;
-		gr = NULL;
+		delete gr;
+		gr = nullptr;
 	}
 
 	int g_e(int out, int in, graph *gr, bool or )

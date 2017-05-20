@@ -8,10 +8,10 @@ namespace coursework
 		// Create new element
 		T_stack *curr = new T_stack;
 		curr->data = data;
-		curr->prev = NULL;
+		curr->prev = nullptr;
 
 		// Insert element in head
-		if (head == NULL)
+		if (head == nullptr)
 		{
 			head = curr;
 			return;
@@ -24,7 +24,7 @@ namespace coursework
 
 	T_stack_dat get_e(T_stack *&head)
 	{
-		if (head == NULL)
+		if (head == nullptr)
 		{
 			T_exception e;
 			e.text = "Пустий стек.";

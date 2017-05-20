@@ -1,4 +1,6 @@
 #pragma once
+#include "stdafx.hpp"
+#include "globals.hpp"
 
 namespace coursework
 {
@@ -22,16 +24,30 @@ namespace coursework
 
 	/**
 	* Delete dynamic array n x m
-	* @param ar array n x m
+	* @param arr pointer on array
 	* @param n rows
-	* @return pointer on array
 	*/
 	template<typename T>
-	void delete_array(T **ar, int n)
+	void delete_array(T** arr, int n)
 	{
-		for (int i = 0; i < n; i++)
-			delete[] ar[i];
-		delete[] ar;
-	}
+		if (arr == nullptr)
+		{
+			T_exception e;
+			e.code = 10;
+			e.text = "Не можливо звільнити пам'ять.";
+			throw(e);
+		}
 
+		for (int i = 0; i < n; i++)
+			delete[] arr[i];
+		if (arr == nullptr)
+		{
+			T_exception e;
+			e.code = 10;
+			e.text = "Не можливо звільнити пам'ять.";
+			throw(e);
+		}
+		delete[] arr;
+		arr = nullptr;
+	}
 }

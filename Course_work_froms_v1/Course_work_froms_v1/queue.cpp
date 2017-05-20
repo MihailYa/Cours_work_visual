@@ -8,10 +8,10 @@ namespace coursework
 		// Create new element
 		T_queue *curr = new T_queue;
 		curr->data = data;
-		curr->next = NULL;
+		curr->next = nullptr;
 
 		// Insert element in head
-		if (head == NULL)
+		if (head == nullptr)
 		{
 			head = curr;
 			tail = head;
@@ -26,7 +26,7 @@ namespace coursework
 
 	int get_e(T_queue *&head, T_queue *&tail)
 	{
-		if (head == NULL)
+		if (head == nullptr)
 		{
 			T_exception e;
 			e.text = "Пуста черга.";
@@ -39,8 +39,8 @@ namespace coursework
 		if (head == tail)
 		{
 			delete head;
-			head = NULL;
-			tail = NULL;
+			head = nullptr;
+			tail = nullptr;
 			return data;
 		}
 

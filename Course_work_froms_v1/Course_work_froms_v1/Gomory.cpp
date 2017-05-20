@@ -5,10 +5,10 @@ namespace coursework
 
 	void Gomory(char *file_name, graph *&gr)
 	{
-		FILE *f;
+		FILE *f = nullptr;
 
 		// Open file
-		if ((f = fopen(file_name, "wt")) == NULL)
+		if ((f = fopen(file_name, "wt")) == nullptr)
 		{
 			T_exception e;
 			e.code = 1;
@@ -19,15 +19,16 @@ namespace coursework
 
 		// Recreate graph
 		gr->type = 0;
-		if (gr->adj_m != NULL)
+		if (gr->adj_m != nullptr)
 		{
-			delete_array<bool>(gr->adj_m, gr->n_vertexes);
+			delete_array(gr->adj_m, gr->n_vertexes);
 			gr->adj_m = adj(gr);
 		}
 
 		// Give memory for result graph
 		graph *gr_result = create_graph(gr->n_vertexes, gr->n_vertexes - 1);
 
+		
 		// Set that we have one vertex (gr)
 		gr_result->n_vertexes = 1;
 		gr_result->n_edges = 0;
@@ -41,7 +42,7 @@ namespace coursework
 		// First init
 		for (int i = 0; i < gr->n_vertexes; i++)
 		{
-			graphs[i] = NULL;
+			graphs[i] = nullptr;
 			gr_result->v_n[i] = gr->v_n[i];
 			for (int j = 0; j < gr->n_vertexes; j++)
 				gr_result->adj_m[i][j] = 0;
@@ -118,7 +119,7 @@ namespace coursework
 				throw(e);
 			}
 		}
-		// Recreare adjacent matrix
+		// Recreate adjacent matrix
 		delete_array(gr_result->adj_m, gr_result->n_vertexes);
 		gr_result->adj_m = adj(gr_result);
 
@@ -194,10 +195,14 @@ namespace coursework
 		//
 		// If end of recurs
 		//
-
 		if (if_end_recurs(graphs[ver]))
 			return;
 
+
+		if (gr_result->n_vertexes >= 6)
+		{
+			printf("1");
+		}
 		//
 		// If not end of recurs
 		//
@@ -208,8 +213,6 @@ namespace coursework
 
 		char *tmp = new char[40];
 		char *buf = new char[40];
-		//char *buffer = new char[20]; // Char buffer
-		//itoa(gr_result->n_vertexes, buf, 10);
 		sprintf(tmp, "Graph#%d.png", gr_result->n_vertexes);
 		graphviz(tmp, graphs[ver]);
 
@@ -254,22 +257,20 @@ namespace coursework
 		//
 		//---------------------------------------------------------
 		// Condense first half of graph (do not hold vect)
-		graphs[gr_result->n_vertexes] = condense(graphs[ver], 0, vect, /*ver*/gr_result->n_vertexes);
-		gr_result->n_vertexes++;
+		graph *gr_first = condense(graphs[ver], 0, vect, /*ver*/gr_result->n_vertexes);
 
 		fprintf(*f_output, "\nFirst condensed graph:\n");
-		output(graphs[gr_result->n_vertexes - 1], f_output);
-		sprintf(tmp, "Graph#%d_first_half.png", gr_result->n_vertexes - 1);
-		graphviz(tmp, graphs[gr_result->n_vertexes - 1]);
+		output(gr_first, f_output);
+		sprintf(tmp, "Graph#%d_first_half.png", gr_result->n_vertexes);
+		graphviz(tmp, gr_first);
 
 		// Condense second half of graph (hold vect)
-		graphs[gr_result->n_vertexes] = condense(graphs[ver], 1, vect, /*ver*/gr_result->n_vertexes - 1);
-		gr_result->n_vertexes++;
+		graph *gr_second = condense(graphs[ver], 1, vect, /*ver*/gr_result->n_vertexes - 1);
 
 		fprintf(*f_output, "\nSecond condensed graph:\n");
-		output(graphs[gr_result->n_vertexes - 1], f_output);
-		sprintf(tmp, "Graph#%d_second_half.png", gr_result->n_vertexes - 2);
-		graphviz(tmp, graphs[gr_result->n_vertexes - 1]);
+		output(gr_second, f_output);
+		sprintf(tmp, "Graph#%d_second_half.png", gr_result->n_vertexes);
+		graphviz(tmp, gr_second);
 		//---------------------------------------------------------
 		//
 		//
@@ -285,18 +286,17 @@ namespace coursework
 		if (!find_in_vect(vect, 0))
 		{
 			// Set on his (gr) place first half
-			graphs[ver] = graphs[gr_result->n_vertexes - 2];
+			graphs[ver] = gr_first;
 			// Set on place this(^) graph, second half graph
-			graphs[gr_result->n_vertexes - 2] = graphs[gr_result->n_vertexes - 1];
-			graphs[gr_result->n_vertexes - 1] = NULL;
-			gr_result->n_vertexes--;
+			graphs[gr_result->n_vertexes] = gr_second;
+			gr_result->n_vertexes++;
 		}
 		else
 		{
 			// Set on his (gr) place second half
-			graphs[ver] = graphs[gr_result->n_vertexes - 1];
-			graphs[gr_result->n_vertexes - 1] = NULL;
-			gr_result->n_vertexes--;
+			graphs[ver] = gr_second;
+			graphs[gr_result->n_vertexes] = gr_first;
+			gr_result->n_vertexes++;
 		}
 
 		// Add new edge between graphs[ver] and second hapf graphs[last]
@@ -422,7 +422,7 @@ namespace coursework
 		result->v_n[0].union_v = true;
 
 		// Create adjacent matrix
-		if (gr->adj_m == NULL)
+		if (gr->adj_m == nullptr)
 			gr->adj_m = adj(gr);
 
 		int c_e; // Current edge
@@ -560,8 +560,8 @@ namespace coursework
 	{
 		// Vertor of vertexes of first half of cut
 		int* result = new int[gr->n_vertexes];
-		T_queue *wave_head = NULL;
-		T_queue *wave_tail = NULL;
+		T_queue *wave_head = nullptr;
+		T_queue *wave_tail = nullptr;
 
 		// Array of visited vertices
 		bool* visit = new bool[gr->n_vertexes];
@@ -581,7 +581,7 @@ namespace coursework
 			j = 1;		// Count of vertexes in result - 1
 
 		// Fill result vector
-		while (wave_head != NULL)
+		while (wave_head != nullptr)
 		{
 			// Get element from previous wave
 			c_v = get_e(wave_head, wave_tail);
@@ -655,8 +655,8 @@ namespace coursework
 		{
 			delete_graph(graphs[i]);
 		}
-		delete[] * graphs;
-		graphs = NULL;
+		delete[] graphs;
+		graphs = nullptr;
 	}
 
 }

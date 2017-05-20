@@ -5,10 +5,10 @@ namespace coursework
 
 	void input(const char *file_name, graph *&gr)
 	{
-		FILE *f;
+		FILE *f = nullptr;
 
 		// Open file
-		if ((f = fopen(file_name, "rt")) == NULL)
+		if ((f = fopen(file_name, "rt")) == nullptr)
 		{
 			T_exception e;
 			e.code = 1;
@@ -57,14 +57,6 @@ namespace coursework
 				e.text = "Не правильно вказано граф.";
 				throw(e);
 			}
-			if (fscanf(f, "%d", &(gr->edges[i].out)) <= 0 || gr->edges[i].out <= 0 || gr->edges[i].out > gr->n_vertexes)
-			{
-				T_exception e;
-				e.code = 1;
-				e.text = "Не правильно вказано граф.";
-				throw(e);
-			}
-			gr->edges[i].out--;
 			if (fscanf(f, "%d", &(gr->edges[i].in)) <= 0 || gr->edges[i].in <= 0 || gr->edges[i].in > gr->n_vertexes)
 			{
 				T_exception e;
@@ -73,6 +65,14 @@ namespace coursework
 				throw(e);
 			}
 			gr->edges[i].in--;
+			if (fscanf(f, "%d", &(gr->edges[i].out)) <= 0 || gr->edges[i].out <= 0 || gr->edges[i].out > gr->n_vertexes)
+			{
+				T_exception e;
+				e.code = 1;
+				e.text = "Не правильно вказано граф.";
+				throw(e);
+			}
+			gr->edges[i].out--;
 			if (fscanf(f, "%d", &(gr->edges[i].pass_abl)) <= 0 || gr->edges[i].pass_abl <= 0)
 			{
 				T_exception e;
@@ -109,7 +109,7 @@ namespace coursework
 		bool type;
 
 		char edges[255];
-		char *tmp;
+		char *tmp = NULL;
 
 		strcpy(edges, text);
 
@@ -152,16 +152,6 @@ namespace coursework
 		for (int i = 0; i < gr->n_edges; i++)
 		{
 			tmp = strtok(NULL, " \n");
-			if (tmp == NULL || (gr->edges[i].out = atoi(tmp)) <= 0 || gr->edges[i].out > n_vertexes)
-			{
-				T_exception e;
-				e.code = 1;
-				e.text = "Не правильно вказано граф.";
-				throw(e);
-			}
-			gr->edges[i].out--;
-
-			tmp = strtok(NULL, " \n");
 			if (tmp == NULL || (gr->edges[i].in = atoi(tmp)) <= 0 || gr->edges[i].in > n_vertexes)
 			{
 				T_exception e;
@@ -170,6 +160,16 @@ namespace coursework
 				throw(e);
 			}
 			gr->edges[i].in--;
+
+			tmp = strtok(NULL, " \n");
+			if (tmp == NULL || (gr->edges[i].out = atoi(tmp)) <= 0 || gr->edges[i].out > n_vertexes)
+			{
+				T_exception e;
+				e.code = 1;
+				e.text = "Не правильно вказано граф.";
+				throw(e);
+			}
+			gr->edges[i].out--;
 
 			tmp = strtok(NULL, " \n");
 			if (tmp == NULL || (gr->edges[i].pass_abl = atoi(tmp)) <= 0)
