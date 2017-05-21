@@ -1,6 +1,5 @@
 #pragma once
 
-#include "stdafx.hpp"
 #include "graph.hpp"
 
 namespace coursework

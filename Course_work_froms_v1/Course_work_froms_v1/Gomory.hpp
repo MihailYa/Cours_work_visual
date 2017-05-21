@@ -1,10 +1,7 @@
 #pragma once
 
-#include "stdafx.hpp"
 #include "Ford.hpp"
 #include "queue.hpp"
-#include "output.hpp"
-#include "globals.hpp"
 
 namespace coursework
 {

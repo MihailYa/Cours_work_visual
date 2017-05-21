@@ -1,8 +1,6 @@
 #pragma once
 
-#include "stdafx.hpp"
 #include "graph.hpp"
-#include "stdafx.hpp"
 #include <graphviz/gvc.h>
 
 namespace coursework

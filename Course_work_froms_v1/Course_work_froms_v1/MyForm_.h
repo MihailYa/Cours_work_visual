@@ -1,7 +1,5 @@
 #pragma once
 #include "Gomory.hpp"
-#include "Ford.hpp"
-#include "stdafx.hpp"
 #include "PictureForm.h"
 
 // Directory for output
@@ -43,6 +41,7 @@ namespace coursework {
 				{
 					T_exception e;
 					e.text = "Не можливо створити директорію " OUTPUT_DIR;
+					e.solution = "Перезапустіть програму.";
 					e.code = 9;
 					throw(e);
 				}
@@ -567,6 +566,7 @@ namespace coursework {
 					T_exception e;
 					e.code = 9;
 					e.text = "Не можливо видалити файл з дерикторії " OUTPUT_DIR;
+					e.solution = "Перезапустіть програму.";
 					throw(e);
 				}
 				
@@ -737,7 +737,6 @@ namespace coursework {
 			{
 				MessageBox::Show(gcnew String("Помилка: не можливо відкрити зображення.\nМожливе рішення: перезапустіть программу."), "Error", MessageBoxButtons::OK, MessageBoxIcon::Error);
 				this->~MyForm_();
-				chdir("../");
 				return;
 			}
 		}

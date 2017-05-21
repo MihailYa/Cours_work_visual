@@ -36,9 +36,6 @@
     <ClCompile Include="stack.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="stdafx.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="PictureForm.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>

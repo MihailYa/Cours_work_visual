@@ -1,8 +1,6 @@
 #pragma once
 
 #include "input.hpp"
-#include "stdafx.hpp"
-
 #include "MyForm_.h"
 
 

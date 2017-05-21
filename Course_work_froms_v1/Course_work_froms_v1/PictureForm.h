@@ -18,7 +18,16 @@ namespace coursework {
 		PictureForm(char *picture_name)
 		{
 			InitializeComponent();
-			this->pictureBox1->Image = Image::FromFile(gcnew String(picture_name));
+			try
+			{
+				this->pictureBox1->Image = Image::FromFile(gcnew String(picture_name));
+			}
+			catch (System::IO::FileNotFoundException^ e)
+			{
+				MessageBox::Show(gcnew String("Помилка: не можливо відкрити зображення.\nМожливе рішення: перезапустіть программу."), "Error", MessageBoxButtons::OK, MessageBoxIcon::Error);
+				this->~PictureForm();
+				return;
+			}
 			//
 			//TODO: Add the constructor code here
 			//

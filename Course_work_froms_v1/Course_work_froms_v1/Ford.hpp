@@ -1,10 +1,6 @@
 #pragma once
 
-#include "stdafx.hpp"
-#include "graph.hpp"
 #include "output.hpp"
-#include "dynamic_array.hpp"
-#include "globals.hpp"
 #include "stack.hpp"
 
 namespace coursework
