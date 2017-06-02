@@ -222,18 +222,17 @@ namespace coursework
 		// Ford-Fulkerson algorithm
 		int max_stream;
 		max_stream = Ford(f_output, graphs[ver], vers[0], vers[1]);
-		
+
+		// Define minimum cut
+		int *vect;
+		vect = def_min_cut(graphs[ver], vers[0]);
+		delete[] vers;
 
 		// Recreate adjacent matrix
 		for (int i = 0; i < graphs[ver]->n_vertexes; i++)
 			for (int j = 0; j < graphs[ver]->n_vertexes; j++)
 				if (graphs[ver]->adj_m[i][j])
 					graphs[ver]->adj_m[j][i] = 1;
-
-		// Define minimum cut
-		int *vect;
-		vect = def_min_cut(graphs[ver], vers[0]);
-		delete[] vers;
 
 		// Output minimum cut vertices
 		int i = 0;
@@ -591,7 +590,7 @@ namespace coursework
 				if (
 					(!visit[i] && gr->adj_m[c_v][i] && (gr->edges[edge_n].stream < gr->edges[edge_n].pass_abl))
 					||
-					(!visit[i] && (gr->adj_m[i][c_v] && gr->edges[edge_n].pass_abl != 0 && gr->type))
+					(!visit[i] && gr->adj_m[i][c_v] && gr->edges[edge_n].stream != 0)
 					)
 				{
 					visit[i] = 1;
