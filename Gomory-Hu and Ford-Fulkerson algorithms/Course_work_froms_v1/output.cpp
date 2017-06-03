@@ -10,16 +10,10 @@ namespace coursework
 		fprintf(*f, " %13s | %9s | %s\n", "Edges", "Pass able", "Current stream");
 		char tmp[20];
 		for (int i = 0; i < gr->n_edges; i++)
-			if (gr->v_n[gr->edges[i].out].union_v || gr->v_n[gr->edges[i].in].union_v)
-				if (gr->v_n[gr->edges[i].out].union_v)
-				{
-					sprintf(tmp, "S%d", gr->v_n[gr->edges[i].out].v);
-					fprintf(*f, "%5s -> %-5d | %9d | %d\n", tmp, gr->v_n[gr->edges[i].in].v, gr->edges[i].pass_abl, gr->edges[i].stream);
-				}
-				else
-					fprintf(*f, "%5d -> S%-4d | %9d | %d\n", gr->v_n[gr->edges[i].out].v, gr->v_n[gr->edges[i].in].v, gr->edges[i].pass_abl, gr->edges[i].stream);
-			else
-				fprintf(*f, "%5d -> %-5d | %9d | %d\n", gr->v_n[gr->edges[i].out].v, gr->v_n[gr->edges[i].in].v, gr->edges[i].pass_abl, gr->edges[i].stream);
+		{
+			fprintf(*f, "%5s", g_n(gr->v_n[gr->edges[i].out], tmp));
+			fprintf(*f, " -> %-5s | % 9d | %d\n", g_n(gr->v_n[gr->edges[i].in], tmp), gr->edges[i].pass_abl, gr->edges[i].stream);
+		}
 	}
 
 	void output_streams(graph *gr, FILE **f)
@@ -53,6 +47,7 @@ namespace coursework
 	string output_graphviz(graph *gr, bool type)
 	{
 		std::string res;
+		char tmp[10];
 		if (type)
 		{
 			// Create Gomory result graph
@@ -76,27 +71,10 @@ namespace coursework
 			res = "digraph G {\n";
 			for (int i = 0; i < gr->n_edges; i++)
 			{
-				if (gr->v_n[gr->edges[i].in].union_v)
-				{
-					res += "S";
-					res += to_string(gr->v_n[gr->edges[i].in].v);
-					res += " -> ";
-				}
-				else
-				{
-					res += to_string(gr->v_n[gr->edges[i].in].v);
-					res += " -> ";
-				}
+				res += g_n(gr->v_n[gr->edges[i].in], tmp);
+				res += " -> ";
+				res+= g_n(gr->v_n[gr->edges[i].out], tmp);
 
-				if (gr->v_n[gr->edges[i].out].union_v)
-				{
-					res += "S";
-					res += to_string(gr->v_n[gr->edges[i].out].v);
-				}
-				else
-				{
-					res += to_string(gr->v_n[gr->edges[i].out].v);
-				}
 				res += " [label=\" ";
 				res += to_string(gr->edges[i].stream);
 				res += "/";
@@ -109,27 +87,10 @@ namespace coursework
 			res = "graph G {\n";
 			for (int i = 0; i < gr->n_edges; i++)
 			{
-				if (gr->v_n[gr->edges[i].in].union_v)
-				{
-					res += "S";
-					res += to_string(gr->v_n[gr->edges[i].in].v);
-					res += " -- ";
-				}
-				else
-				{
-					res += to_string(gr->v_n[gr->edges[i].in].v);
-					res += " -- ";
-				}
+				res += g_n(gr->v_n[gr->edges[i].in], tmp);
+				res += " -- ";
+				res += g_n(gr->v_n[gr->edges[i].out], tmp);
 
-				if (gr->v_n[gr->edges[i].out].union_v)
-				{
-					res += "S";
-					res += to_string(gr->v_n[gr->edges[i].out].v);
-				}
-				else
-				{
-					res += to_string(gr->v_n[gr->edges[i].out].v);
-				}
 				res += " [label=\" ";
 				res += to_string(gr->edges[i].stream);
 				res += "/";
