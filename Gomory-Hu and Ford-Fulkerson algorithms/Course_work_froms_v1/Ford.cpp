@@ -289,6 +289,11 @@ namespace coursework
 					return true;
 				else
 				{
+					if (!gr->type && gr->edges[edge_n].stream == 0)
+					{
+						gr->edges[edge_n].orient = false;
+						gr->adj_m[i][c_v] = true;
+					}
 					max = temp;
 					get_e(head);
 					visit[i] = false;
